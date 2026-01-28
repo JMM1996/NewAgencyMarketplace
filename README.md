@@ -1,17 +1,43 @@
 # NewAgencyMarketplace
 
-A marketplace platform connecting agencies with clients.
+A platform connecting care homes with self-employed care staff for short-term cover.
 
-## Status: Planning Phase
+## What We're Building
 
-We're currently in Phase 0 - defining what we're building before writing code.
+- **Care homes** post shifts when they need cover
+- **Care workers** browse and apply for shifts
+- **We** take a 15% introduction fee per shift
 
-See [ROADMAP.md](./ROADMAP.md) for our product roadmap and development phases.
+## Status: Phase 0 - Foundation
+
+| Milestone | Target |
+|-----------|--------|
+| MVP | End of April 2026 |
+| Monetization | End of December 2026 |
+
+See [ROADMAP.md](./ROADMAP.md) for full product roadmap.
+
+## Tech Stack
+
+- Next.js 14+ (App Router)
+- TypeScript
+- PostgreSQL + Prisma
+- Tailwind CSS
+- Vercel
 
 ## Getting Started
 
-*Coming soon - project is in planning phase*
+*Coming soon - project scaffold in progress*
 
-## Contributing
+## Development
 
-This project is in early development. Roadmap decisions are tracked in ROADMAP.md.
+```bash
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+
+# Run tests
+npm test
+```
