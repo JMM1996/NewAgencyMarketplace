@@ -21,9 +21,10 @@ See [ROADMAP.md](./ROADMAP.md) for full product roadmap.
 
 - Next.js 14+ (App Router)
 - TypeScript
-- PostgreSQL + Prisma
-- Tailwind CSS
+- Supabase (PostgreSQL + Auth + Storage)
+- Tailwind CSS + shadcn/ui
 - Vercel
+- Stripe Connect (Phase 4)
 
 ## Getting Started
 

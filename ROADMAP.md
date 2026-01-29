@@ -211,19 +211,35 @@ The care industry is regulated. We need to be aware of:
 
 ---
 
-## Tech Stack (Proposed)
+## Tech Stack (Confirmed)
 
-| Layer | Choice | Rationale |
+| Layer | Choice | Who Leads |
 |-------|--------|-----------|
-| **Framework** | Next.js 14+ (App Router) | Full-stack, SSR for SEO, fast dev |
-| **Language** | TypeScript | Type safety, fewer bugs |
-| **Database** | PostgreSQL | Relational data, proven, Stripe compatible |
-| **ORM** | Prisma | Great DX, type-safe queries |
-| **Auth** | NextAuth.js v5 | Free, flexible, good enough for MVP |
-| **Hosting** | Vercel | Easy deployment, good free tier |
-| **Styling** | Tailwind CSS | Fast UI development |
-| **Email** | Resend | Simple transactional email |
-| **Payments** | Stripe Connect | Phase 4, marketplace payments |
+| **Framework** | Next.js 14+ (App Router) | You |
+| **Language** | TypeScript | You |
+| **Backend/DB/Auth** | Supabase (PostgreSQL + Auth + Storage) | You |
+| **Hosting** | Vercel | You |
+| **Payments** | Stripe Connect | You (Phase 4) |
+| **Version Control** | GitHub | You |
+| **Styling** | Tailwind CSS | Claude fills gap |
+| **Email** | Resend (transactional emails) | Claude fills gap |
+| **Forms/Validation** | React Hook Form + Zod | Claude fills gap |
+| **UI Components** | shadcn/ui (Radix-based) | Claude fills gap |
+| **Date/Time** | date-fns | Claude fills gap |
+| **Maps/Location** | TBD (for location filtering) | Claude fills gap |
+
+### Where I'll Fill Gaps
+
+| Area | What I'll Handle |
+|------|------------------|
+| **UI/UX patterns** | Component structure, responsive design, accessibility |
+| **Database schema** | Table design, relationships, RLS policies for Supabase |
+| **Form handling** | Validation logic, error states, user feedback |
+| **Email templates** | Transactional email content and triggers |
+| **Business logic** | Shift matching, application flow, status management |
+| **Type definitions** | TypeScript interfaces, Supabase types |
+| **Testing strategy** | What to test, how to structure tests |
+| **Security** | Input sanitization, auth guards, data access patterns |
 
 ---
 
