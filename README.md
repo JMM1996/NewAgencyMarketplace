@@ -1,36 +1,135 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CareConnect UK - Care Staff Marketplace
+
+A platform connecting care homes with self-employed care staff for short-term cover.
+
+## What We're Building
+
+- **Care homes** post shifts when they need cover
+- **Care workers** browse and apply for shifts
+- **We** take a 15% introduction fee per shift
+
+## Status: Phase 1 - Core Implementation Complete
+
+| Milestone | Target |
+|-----------|--------|
+| MVP | End of April 2026 |
+| Monetization | End of December 2026 |
+
+See [ROADMAP.md](./ROADMAP.md) for full product roadmap.
+
+## Tech Stack
+
+- **Frontend**: Next.js 14 (App Router) with TypeScript
+- **Styling**: Tailwind CSS
+- **Database**: PostgreSQL with Prisma ORM
+- **Authentication**: NextAuth.js
+- **Validation**: Zod
+- **Icons**: Lucide React
+- **Deployment**: Vercel (recommended)
+- **Payments**: Stripe Connect (Phase 4)
+
+## Features Implemented
+
+### For Care Staff
+- Registration and profile creation
+- Browse available shifts with filters (location, role, shift type)
+- View shift details and apply
+- Dashboard with booking status tracking
+- Rating and review system
+
+### For Care Homes
+- Registration with CQC details
+- Post shifts with detailed requirements
+- Review applicants and confirm bookings
+- Dashboard with shift management
+- Staff rating system
+
+### Core Database Models
+- Users (with role-based access)
+- CareStaff profiles (qualifications, DBS verification, availability)
+- CareHome profiles (CQC details, specializations)
+- Shifts (day, night, long day, twilight, sleep-in, waking night)
+- Bookings with status tracking
+- Reviews, Messages, Notifications
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 18+
+- PostgreSQL database
+
+### Installation
 
 ```bash
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your DATABASE_URL and NEXTAUTH_SECRET
+
+# Generate Prisma client
+npm run db:generate
+
+# Push schema to database
+npm run db:push
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/
+│   ├── (auth)/           # Login & Register pages
+│   ├── api/              # API routes
+│   │   ├── auth/         # NextAuth & registration
+│   │   ├── bookings/     # Booking management
+│   │   └── shifts/       # Shift CRUD
+│   ├── dashboard/        # User dashboards
+│   │   ├── care-home/    # Care home management
+│   │   └── staff/        # Care staff management
+│   └── shifts/           # Public shift browsing
+├── components/           # Reusable components
+├── lib/                  # Utilities (auth, db)
+├── providers/            # Context providers
+└── generated/            # Prisma client
+prisma/
+└── schema.prisma         # Database schema
+```
 
-## Learn More
+## Environment Variables
 
-To learn more about Next.js, take a look at the following resources:
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/careconnect"
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your-secret-key"
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npm run db:generate  # Generate Prisma client
+npm run db:push      # Push schema to database
+npm run db:studio    # Open Prisma Studio
+```
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Deploy on [Vercel](https://vercel.com):
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Connect your GitHub repository
+2. Add environment variables
+3. Deploy
+
+## License
+
+Private - All rights reserved
