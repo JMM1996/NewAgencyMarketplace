@@ -1,0 +1,405 @@
+// CareConnect UK - Care Marketplace Database Schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USER & AUTHENTICATION
+// ============================================
+
+enum UserRole {
+  CARE_STAFF
+  CARE_HOME
+  ADMIN
+}
+
+enum AccountStatus {
+  PENDING_VERIFICATION
+  ACTIVE
+  SUSPENDED
+  DEACTIVATED
+}
+
+model User {
+  id            String        @id @default(cuid())
+  email         String        @unique
+  password      String
+  role          UserRole
+  status        AccountStatus @default(PENDING_VERIFICATION)
+  emailVerified DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  careStaff     CareStaff?
+  careHome      CareHome?
+  sentMessages  Message[]     @relation("SentMessages")
+  receivedMessages Message[]  @relation("ReceivedMessages")
+  notifications Notification[]
+
+  @@map("users")
+}
+
+// ============================================
+// CARE STAFF PROFILE
+// ============================================
+
+enum StaffType {
+  REGISTERED_NURSE
+  HEALTHCARE_ASSISTANT
+  SUPPORT_WORKER
+  SENIOR_CARER
+  CARE_ASSISTANT
+  ACTIVITIES_COORDINATOR
+  DOMESTIC_STAFF
+  KITCHEN_STAFF
+  OTHER
+}
+
+model CareStaff {
+  id                  String      @id @default(cuid())
+  userId              String      @unique
+  user                User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Personal Info
+  firstName           String
+  lastName            String
+  phone               String?
+  profilePhoto        String?
+  bio                 String?
+  dateOfBirth         DateTime?
+
+  // Address
+  addressLine1        String?
+  addressLine2        String?
+  city                String?
+  county              String?
+  postcode            String?
+
+  // Professional Info
+  staffType           StaffType   @default(CARE_ASSISTANT)
+  yearsExperience     Int         @default(0)
+  hourlyRate          Decimal?    @db.Decimal(10, 2)
+  availableForNights  Boolean     @default(false)
+  availableForWeekends Boolean    @default(true)
+  maxTravelDistance   Int         @default(10) // miles
+
+  // Verification Status
+  dbsVerified         Boolean     @default(false)
+  dbsCertificateNumber String?
+  dbsIssueDate        DateTime?
+  rightToWorkVerified Boolean     @default(false)
+  identityVerified    Boolean     @default(false)
+
+  // Rating
+  averageRating       Decimal?    @db.Decimal(3, 2)
+  totalReviews        Int         @default(0)
+  totalShiftsCompleted Int        @default(0)
+
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+
+  // Relations
+  qualifications      Qualification[]
+  bookings            Booking[]
+  reviewsReceived     Review[]      @relation("StaffReviews")
+  availability        StaffAvailability[]
+
+  @@map("care_staff")
+}
+
+model Qualification {
+  id              String    @id @default(cuid())
+  careStaffId     String
+  careStaff       CareStaff @relation(fields: [careStaffId], references: [id], onDelete: Cascade)
+
+  name            String
+  issuingBody     String?
+  issueDate       DateTime?
+  expiryDate      DateTime?
+  certificateUrl  String?
+  verified        Boolean   @default(false)
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("qualifications")
+}
+
+model StaffAvailability {
+  id          String    @id @default(cuid())
+  careStaffId String
+  careStaff   CareStaff @relation(fields: [careStaffId], references: [id], onDelete: Cascade)
+
+  dayOfWeek   Int       // 0 = Sunday, 6 = Saturday
+  startTime   String    // "09:00"
+  endTime     String    // "17:00"
+
+  @@unique([careStaffId, dayOfWeek])
+  @@map("staff_availability")
+}
+
+// ============================================
+// CARE HOME PROFILE
+// ============================================
+
+enum CareHomeType {
+  RESIDENTIAL
+  NURSING
+  DEMENTIA
+  LEARNING_DISABILITIES
+  MENTAL_HEALTH
+  REHABILITATION
+  RESPITE
+  OTHER
+}
+
+model CareHome {
+  id                  String        @id @default(cuid())
+  userId              String        @unique
+  user                User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Business Info
+  name                String
+  description         String?
+  logo                String?
+  phone               String?
+  website             String?
+  cqcRating           String?       // CQC inspection rating
+  cqcLocationId       String?       // CQC location ID for verification
+
+  // Address
+  addressLine1        String
+  addressLine2        String?
+  city                String
+  county              String?
+  postcode            String
+  latitude            Decimal?      @db.Decimal(10, 8)
+  longitude           Decimal?      @db.Decimal(11, 8)
+
+  // Care Home Details
+  careHomeType        CareHomeType  @default(RESIDENTIAL)
+  numberOfBeds        Int?
+  specializations     String[]      // Array of specializations
+
+  // Verification
+  verified            Boolean       @default(false)
+
+  // Stats
+  averageRating       Decimal?      @db.Decimal(3, 2)
+  totalReviews        Int           @default(0)
+  totalShiftsPosted   Int           @default(0)
+
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  // Relations
+  shifts              Shift[]
+  reviewsGiven        Review[]      @relation("HomeReviews")
+
+  @@map("care_homes")
+}
+
+// ============================================
+// SHIFTS & BOOKINGS
+// ============================================
+
+enum ShiftStatus {
+  OPEN
+  FILLED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum ShiftType {
+  DAY
+  NIGHT
+  LONG_DAY
+  TWILIGHT
+  SLEEP_IN
+  WAKING_NIGHT
+}
+
+model Shift {
+  id              String      @id @default(cuid())
+  careHomeId      String
+  careHome        CareHome    @relation(fields: [careHomeId], references: [id], onDelete: Cascade)
+
+  // Shift Details
+  title           String
+  description     String?
+  requiredRole    StaffType
+  shiftType       ShiftType   @default(DAY)
+
+  // Timing
+  date            DateTime    @db.Date
+  startTime       String      // "07:00"
+  endTime         String      // "19:00"
+  breakDuration   Int         @default(30) // minutes
+
+  // Pay
+  hourlyRate      Decimal     @db.Decimal(10, 2)
+  totalPay        Decimal?    @db.Decimal(10, 2)
+
+  // Requirements
+  uniformProvided Boolean     @default(false)
+  parkingAvailable Boolean    @default(true)
+  specialRequirements String?
+
+  // Status
+  status          ShiftStatus @default(OPEN)
+
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relations
+  bookings        Booking[]
+
+  @@index([date, status])
+  @@index([careHomeId])
+  @@map("shifts")
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  REJECTED
+  CANCELLED_BY_STAFF
+  CANCELLED_BY_HOME
+  COMPLETED
+  NO_SHOW
+}
+
+model Booking {
+  id              String        @id @default(cuid())
+  shiftId         String
+  shift           Shift         @relation(fields: [shiftId], references: [id], onDelete: Cascade)
+  careStaffId     String
+  careStaff       CareStaff     @relation(fields: [careStaffId], references: [id], onDelete: Cascade)
+
+  status          BookingStatus @default(PENDING)
+
+  // Timestamps
+  appliedAt       DateTime      @default(now())
+  confirmedAt     DateTime?
+  completedAt     DateTime?
+
+  // Check-in/out
+  checkedInAt     DateTime?
+  checkedOutAt    DateTime?
+
+  // Notes
+  staffNotes      String?
+  homeNotes       String?
+
+  // Payment
+  agreedRate      Decimal       @db.Decimal(10, 2)
+  totalEarned     Decimal?      @db.Decimal(10, 2)
+  paymentStatus   String?       @default("PENDING")
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  review          Review?
+
+  @@unique([shiftId, careStaffId])
+  @@index([careStaffId, status])
+  @@map("bookings")
+}
+
+// ============================================
+// REVIEWS & RATINGS
+// ============================================
+
+model Review {
+  id            String    @id @default(cuid())
+  bookingId     String    @unique
+  booking       Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  // Who is being reviewed
+  careStaffId   String?
+  careStaff     CareStaff? @relation("StaffReviews", fields: [careStaffId], references: [id])
+  careHomeId    String?
+  careHome      CareHome?  @relation("HomeReviews", fields: [careHomeId], references: [id])
+
+  // Review Details
+  rating        Int       // 1-5
+  comment       String?
+
+  // Review Categories (1-5 each)
+  punctuality   Int?
+  professionalism Int?
+  communication Int?
+  skills        Int?
+
+  isPublic      Boolean   @default(true)
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("reviews")
+}
+
+// ============================================
+// MESSAGING
+// ============================================
+
+model Message {
+  id          String    @id @default(cuid())
+  senderId    String
+  sender      User      @relation("SentMessages", fields: [senderId], references: [id])
+  receiverId  String
+  receiver    User      @relation("ReceivedMessages", fields: [receiverId], references: [id])
+
+  content     String
+  read        Boolean   @default(false)
+  readAt      DateTime?
+
+  createdAt   DateTime  @default(now())
+
+  @@index([senderId, receiverId])
+  @@index([receiverId, read])
+  @@map("messages")
+}
+
+// ============================================
+// NOTIFICATIONS
+// ============================================
+
+enum NotificationType {
+  SHIFT_POSTED
+  BOOKING_REQUEST
+  BOOKING_CONFIRMED
+  BOOKING_REJECTED
+  SHIFT_REMINDER
+  REVIEW_RECEIVED
+  MESSAGE_RECEIVED
+  VERIFICATION_UPDATE
+  SYSTEM
+}
+
+model Notification {
+  id          String           @id @default(cuid())
+  userId      String
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type        NotificationType
+  title       String
+  message     String
+  link        String?
+  read        Boolean          @default(false)
+
+  createdAt   DateTime         @default(now())
+
+  @@index([userId, read])
+  @@map("notifications")
+}
