@@ -70,26 +70,32 @@ Your 15% fee model is **competitive** - traditional agencies charge 25-40% margi
 
 ---
 
-### 3. Curam Care
+### 3. Curam Care (Closest Business Model)
 **Website**: [curamcare.com](https://www.curamcare.com)
 
 | Aspect | Details |
 |--------|---------|
 | **Model** | Marketplace for self-employed carers |
+| **Fee** | **12.5% + VAT (~15% total)** - "lowest in the sector" |
 | **Focus** | Live-in care, hourly care, private clients |
 | **Geography** | All main UK postcodes |
 | **Worker Control** | Carers set own rates, choose hours |
+| **Example** | Carer sets £16/hr → takes home £13.60/hr |
+| **Permanent Hire Fee** | £750 + VAT (after 90 days on platform) |
 
 **Strengths**:
-- True self-employed model
+- True self-employed model (like yours)
+- Transparent pricing (like yours)
+- Clients pay 22% less than UK Home Care Association rate
 - Nationwide coverage
 - Focus on building carer-client relationships
 
 **Weaknesses**:
-- Primarily focused on private/home care, not care homes
+- Primarily focused on **private/home care**, not care homes
 - Less focus on short-term/emergency shift cover
+- Focused on live-in care (£950-£1,400/week)
 
-**Opportunity for you**: They target private clients; you target care homes. Different market segment.
+**Opportunity for you**: They've validated the 15% marketplace model works. You apply it to care homes (B2B) instead of private clients (B2C). Different market, same proven economics.
 
 ---
 
@@ -100,18 +106,24 @@ Your 15% fee model is **competitive** - traditional agencies charge 25-40% margi
 |--------|---------|
 | **Model** | Marketplace connecting self-employed carers with clients |
 | **Quality Filter** | Only 5% of applicants accepted |
+| **Minimum Rate** | £10/hr minimum, carers typically charge £15+ |
+| **Worker Pay** | Carers take home over £12/hr on average |
+| **Comparison** | Same carer via agency = £20+/hr to client |
 | **Search** | Free for clients to search carer library |
 
 **Strengths**:
 - Rigorous vetting (5% acceptance rate)
+- Accredited Living Wage employer
 - Cost-effective due to no agency overheads
 - Higher carer wages + lower client costs
+- Offers both Introductory AND Regulated/Fully-managed care
 
 **Weaknesses**:
 - Focused on home/private care, not care homes
-- Selective acceptance may limit supply
+- Selective acceptance (5%) severely limits supply
+- Carers cover own travel costs
 
-**Opportunity for you**: Their strict vetting limits supply. A balance of quality checks without over-filtering could capture more of the market.
+**Opportunity for you**: Their strict vetting limits supply. A balance of quality checks without over-filtering could capture more of the market. Their ~25% margin is higher than your 15%.
 
 ---
 
@@ -153,15 +165,84 @@ Your 15% fee model is **competitive** - traditional agencies charge 25-40% margi
 
 ---
 
+## Real Pricing Data: What Agencies Charge vs Pay
+
+### The Agency Margin Reality
+
+| What Care Homes Pay (per hour) | What Carers Receive | Agency Take | Effective Margin |
+|-------------------------------|---------------------|-------------|------------------|
+| £25-35 (agency carer) | £9-12 | £13-23 | **52-65%** |
+| £25-30 (agency nurse in care home) | £18-19 | £6-12 | **24-40%** |
+| £20 (via Hometouch) | £15+ | ~£5 | **~25%** |
+| £16 (via Curam) | £13.60 | £2.40 | **15% (12.5%+VAT)** |
+
+### Specific Examples
+
+**Traditional Agency (Care Assistant)**
+```
+Care home pays:     £28/hour
+Carer receives:     £11/hour
+Agency keeps:       £17/hour (61% margin)
+```
+
+**Traditional Agency (Nurse)**
+```
+Care home pays:     £30/hour
+Nurse receives:     £19/hour
+Agency keeps:       £11/hour (37% margin)
+```
+
+**Florence (Care Assistant)**
+```
+Care home sets rate: £15-20/hour
+Worker receives:     £11.50-15/hour (after PAYE deductions)
+Florence margin:     ~20-25% estimated
+```
+
+**Curam (Self-Employed Model)**
+```
+Client pays:        £16/hour
+Carer receives:     £13.60/hour
+Curam fee:          £2.40/hour (12.5% + VAT = ~15%)
+```
+
+**Your Model (15% Marketplace Fee)**
+```
+Care home pays:     £18/hour
+Carer receives:     £15.66/hour (keeps 85%)
+Platform fee:       £2.34/hour (15%)
+```
+
+### Why Your 15% Works
+
+| Model | Care Home Pays | Worker Gets | Your Advantage |
+|-------|---------------|-------------|----------------|
+| Traditional agency | £28 | £11 | Care home saves £10/hr, worker earns £4.66 more |
+| Florence (PAYE) | £18 | £12 (after tax) | Worker keeps more (self-employed tax efficiency) |
+| Curam | £16 | £13.60 | Similar model - validates 15% is viable |
+
+### Florence Pay Rates (for reference)
+- Care assistant/support worker: **£11.50 – £28/hour**
+- Social care nurses: **£22.50 – £50/hour**
+- Rates set by care homes, not Florence
+
+### Homecare Association Minimum Price (2025)
+- Recommended minimum: **£32.14/hour** (England)
+- Average local authority pays: **£24.10/hour** (27% below minimum)
+- This gap creates pressure on margins industry-wide
+
+---
+
 ## Traditional Agency Competition
 
 Traditional staffing agencies charge **25-40% margins** and sometimes up to **£2,000 per nursing shift** (NHS data).
 
 | Agency Type | Typical Margin | Your Advantage |
 |-------------|----------------|----------------|
-| Traditional care agencies | 25-40% | Your 15% is 40-60% cheaper |
+| Traditional care agencies | 52-65% | Your 15% is 70-77% cheaper |
 | NHS framework agencies | Capped but still high | You're not NHS-focused anyway |
 | Local recruitment firms | 15-30% of salary (perm) | Different model (per-shift vs. perm) |
+| Curam (closest competitor) | 12.5% + VAT (~15%) | Price parity, but you target care homes |
 
 ---
 
