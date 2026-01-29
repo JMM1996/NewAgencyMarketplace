@@ -35,6 +35,31 @@ We're building an introductory platform - we connect the two parties, they work 
 
 ---
 
+## 📈 Progress Tracker (Quick View)
+
+**Last Updated**: 2026-01-29 by Claude
+
+### MVP Features (9 total)
+```
+Auth & Profiles     [____] 0/4
+Shift Flow          [____] 0/5
+─────────────────────────────
+Total               [____] 0/9
+```
+
+### Current Sprint Focus
+- Phase 0: Setting up project scaffold and database schema
+
+### Blockers
+- None currently
+
+### Recent Completions
+- Roadmap created and approved
+- Tech stack confirmed (Next.js, Supabase, Vercel)
+- Business model defined (15% per shift)
+
+---
+
 ## Phase 0: Foundation (Current)
 **Target**: Early February 2026
 **Goal**: Define scope and set up technical foundation.
@@ -43,8 +68,8 @@ We're building an introductory platform - we connect the two parties, they work 
 - [x] Define target user personas ✓ Care staff + Care homes
 - [x] Define core value proposition ✓ Fast, reliable short-term cover
 - [x] Define revenue model ✓ 15% per shift from care home
-- [ ] Choose tech stack (confirm recommendations)
-- [ ] Define MVP feature cut-off (see Phase 1)
+- [x] Choose tech stack ✓ Next.js + Supabase + Vercel
+- [x] Define MVP feature cut-off ✓ See Phase 1 scope
 
 ### Deliverables
 - [x] Roadmap document
