@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
 import { z } from 'zod'
-import { authOptions } from '@/lib/auth'
+import { getCurrentUser } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 
 // POST - Apply for a shift (care staff only)
@@ -12,13 +11,13 @@ const applySchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const user = await getCurrentUser()
 
-    if (!session) {
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    if (session.user.role !== 'CARE_STAFF') {
+    if (user.role !== 'CARE_STAFF') {
       return NextResponse.json(
         { error: 'Only care staff can apply for shifts' },
         { status: 403 }
@@ -26,7 +25,7 @@ export async function POST(request: NextRequest) {
     }
 
     const careStaff = await prisma.careStaff.findUnique({
-      where: { userId: session.user.id },
+      where: { userId: user.id },
     })
 
     if (!careStaff) {
@@ -126,18 +125,18 @@ export async function POST(request: NextRequest) {
 // GET - Get user's bookings
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const user = await getCurrentUser()
 
-    if (!session) {
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status')
 
-    if (session.user.role === 'CARE_STAFF') {
+    if (user.role === 'CARE_STAFF') {
       const careStaff = await prisma.careStaff.findUnique({
-        where: { userId: session.user.id },
+        where: { userId: user.id },
       })
 
       if (!careStaff) {
@@ -166,9 +165,9 @@ export async function GET(request: NextRequest) {
       })
 
       return NextResponse.json(bookings)
-    } else if (session.user.role === 'CARE_HOME') {
+    } else if (user.role === 'CARE_HOME') {
       const careHome = await prisma.careHome.findUnique({
-        where: { userId: session.user.id },
+        where: { userId: user.id },
       })
 
       if (!careHome) {

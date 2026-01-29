@@ -1,22 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
-import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { UserRole, StaffType, CareHomeType } from '@/generated/prisma'
 
+// Schema for care staff registration (password handled by Supabase)
 const careStaffSchema = z.object({
   userType: z.literal('CARE_STAFF'),
+  supabaseUserId: z.string().min(1, 'Supabase user ID is required'),
   email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
   staffType: z.nativeEnum(StaffType).optional(),
 })
 
+// Schema for care home registration (password handled by Supabase)
 const careHomeSchema = z.object({
   userType: z.literal('CARE_HOME'),
+  supabaseUserId: z.string().min(1, 'Supabase user ID is required'),
   email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
   name: z.string().min(1, 'Care home name is required'),
   addressLine1: z.string().min(1, 'Address is required'),
   city: z.string().min(1, 'City is required'),
@@ -34,9 +35,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const validated = registerSchema.parse(body)
 
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email: validated.email },
+    // Check if user already exists (by Supabase ID or email)
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { id: validated.supabaseUserId },
+          { email: validated.email },
+        ],
+      },
     })
 
     if (existingUser) {
@@ -46,15 +52,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(validated.password, 12)
-
-    // Create user and profile based on type
+    // Create user and profile based on type (auth handled by Supabase)
     if (validated.userType === 'CARE_STAFF') {
       const user = await prisma.user.create({
         data: {
+          id: validated.supabaseUserId, // Use Supabase user ID
           email: validated.email,
-          password: hashedPassword,
+          password: '', // No password needed - auth handled by Supabase
           role: UserRole.CARE_STAFF,
           careStaff: {
             create: {
@@ -84,8 +88,9 @@ export async function POST(request: NextRequest) {
     } else {
       const user = await prisma.user.create({
         data: {
+          id: validated.supabaseUserId, // Use Supabase user ID
           email: validated.email,
-          password: hashedPassword,
+          password: '', // No password needed - auth handled by Supabase
           role: UserRole.CARE_HOME,
           careHome: {
             create: {

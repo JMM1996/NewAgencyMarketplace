@@ -1,15 +1,15 @@
 'use client'
 
 import { useState, Suspense } from 'react'
-import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Mail, Lock, AlertCircle, Loader2 } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
 function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
+  const redirectTo = searchParams.get('redirectTo') || '/dashboard'
   const error = searchParams.get('error')
 
   const [formData, setFormData] = useState({
@@ -24,17 +24,18 @@ function LoginForm() {
     setIsLoading(true)
     setFormError(null)
 
+    const supabase = createClient()
+
     try {
-      const result = await signIn('credentials', {
+      const { error } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
-        redirect: false,
       })
 
-      if (result?.error) {
-        setFormError(result.error)
+      if (error) {
+        setFormError(error.message)
       } else {
-        router.push(callbackUrl)
+        router.push(redirectTo)
         router.refresh()
       }
     } catch {

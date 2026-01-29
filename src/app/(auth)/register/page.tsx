@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Mail, Lock, User, Building2, MapPin, AlertCircle, Loader2, CheckCircle } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
 type UserType = 'staff' | 'home'
 
@@ -56,15 +57,38 @@ function RegisterForm() {
     }
 
     setIsLoading(true)
+    const supabase = createClient()
 
     try {
+      // Sign up with Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: staffData.email,
+        password: staffData.password,
+        options: {
+          data: {
+            user_type: 'CARE_STAFF',
+            first_name: staffData.firstName,
+            last_name: staffData.lastName,
+          },
+        },
+      })
+
+      if (authError) {
+        throw new Error(authError.message)
+      }
+
+      if (!authData.user) {
+        throw new Error('Registration failed')
+      }
+
+      // Create profile in database
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userType: 'CARE_STAFF',
+          supabaseUserId: authData.user.id,
           email: staffData.email,
-          password: staffData.password,
           firstName: staffData.firstName,
           lastName: staffData.lastName,
         }),
@@ -73,12 +97,13 @@ function RegisterForm() {
       const data = await res.json()
 
       if (!res.ok) {
-        throw new Error(data.error || 'Registration failed')
+        throw new Error(data.error || 'Failed to create profile')
       }
 
       setSuccess(true)
       setTimeout(() => {
-        router.push('/login')
+        router.push('/dashboard')
+        router.refresh()
       }, 2000)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed')
@@ -102,15 +127,37 @@ function RegisterForm() {
     }
 
     setIsLoading(true)
+    const supabase = createClient()
 
     try {
+      // Sign up with Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: homeData.email,
+        password: homeData.password,
+        options: {
+          data: {
+            user_type: 'CARE_HOME',
+            care_home_name: homeData.name,
+          },
+        },
+      })
+
+      if (authError) {
+        throw new Error(authError.message)
+      }
+
+      if (!authData.user) {
+        throw new Error('Registration failed')
+      }
+
+      // Create profile in database
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userType: 'CARE_HOME',
+          supabaseUserId: authData.user.id,
           email: homeData.email,
-          password: homeData.password,
           name: homeData.name,
           addressLine1: homeData.addressLine1,
           city: homeData.city,
@@ -121,12 +168,13 @@ function RegisterForm() {
       const data = await res.json()
 
       if (!res.ok) {
-        throw new Error(data.error || 'Registration failed')
+        throw new Error(data.error || 'Failed to create profile')
       }
 
       setSuccess(true)
       setTimeout(() => {
-        router.push('/login')
+        router.push('/dashboard')
+        router.refresh()
       }, 2000)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed')
@@ -144,7 +192,7 @@ function RegisterForm() {
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Registration Successful!</h2>
           <p className="text-gray-600 mb-4">
-            Your account has been created. Redirecting you to login...
+            Your account has been created. Redirecting to dashboard...
           </p>
           <Loader2 className="w-6 h-6 animate-spin mx-auto text-teal-600" />
         </div>

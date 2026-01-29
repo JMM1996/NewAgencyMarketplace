@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation'
-import { getServerSession } from 'next-auth'
 import Link from 'next/link'
-import { authOptions } from '@/lib/auth'
+import { getCurrentUser } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import {
   ArrowLeft,
@@ -59,17 +58,17 @@ export default async function ShiftDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const session = await getServerSession(authOptions)
+  const user = await getCurrentUser()
 
   const shift = await prisma.shift.findUnique({
     where: { id },
     include: {
       careHome: true,
-      bookings: session?.user.role === 'CARE_STAFF'
+      bookings: user?.role === 'CARE_STAFF'
         ? {
             where: {
               careStaff: {
-                userId: session.user.id,
+                userId: user.id,
               },
             },
           }
@@ -284,8 +283,8 @@ export default async function ShiftDetailPage({
             {/* Apply Button */}
             <ApplyButton
               shiftId={shift.id}
-              isLoggedIn={!!session}
-              isCareStaff={session?.user.role === 'CARE_STAFF'}
+              isLoggedIn={!!user}
+              isCareStaff={user?.role === 'CARE_STAFF'}
               hasApplied={hasApplied}
               bookingStatus={userBooking?.status}
               shiftStatus={shift.status}

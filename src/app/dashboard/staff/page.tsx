@@ -1,7 +1,6 @@
-import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { authOptions } from '@/lib/auth'
+import { getCurrentUser } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import {
   Search,
@@ -17,15 +16,15 @@ import {
 import { format } from 'date-fns'
 
 export default async function StaffDashboard() {
-  const session = await getServerSession(authOptions)
+  const user = await getCurrentUser()
 
-  if (!session || session.user.role !== 'CARE_STAFF') {
+  if (!user || user.role !== 'CARE_STAFF') {
     redirect('/login')
   }
 
   // Get care staff profile
   const careStaff = await prisma.careStaff.findUnique({
-    where: { userId: session.user.id },
+    where: { userId: user.id },
     include: {
       bookings: {
         where: {

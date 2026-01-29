@@ -1,17 +1,64 @@
 'use client'
 
 import Link from 'next/link'
-import { useSession, signOut } from 'next-auth/react'
-import { useState } from 'react'
-import { Menu, X, User, LogOut, LayoutDashboard } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { Menu, X, LogOut, LayoutDashboard } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
+import type { User } from '@supabase/supabase-js'
+
+interface UserWithRole extends User {
+  user_metadata: {
+    role?: string
+    [key: string]: unknown
+  }
+}
 
 export function Navbar() {
-  const { data: session, status } = useSession()
+  const router = useRouter()
+  const [user, setUser] = useState<UserWithRole | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
+  useEffect(() => {
+    // Only run on the client side
+    if (typeof window === 'undefined') return
+
+    // Check if Supabase is configured
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      setIsLoading(false)
+      return
+    }
+
+    const supabase = createClient()
+
+    // Get initial session
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      setUser(user as UserWithRole | null)
+      setIsLoading(false)
+    }
+    getUser()
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user as UserWithRole | null)
+      setIsLoading(false)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  const handleSignOut = async () => {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push('/')
+    router.refresh()
+  }
+
   const getDashboardLink = () => {
-    if (!session) return '/login'
-    return session.user.role === 'CARE_HOME' ? '/dashboard/care-home' : '/dashboard/staff'
+    if (!user) return '/login'
+    return user.user_metadata?.role === 'CARE_HOME' ? '/dashboard/care-home' : '/dashboard/staff'
   }
 
   return (
@@ -39,9 +86,9 @@ export function Navbar() {
               About
             </Link>
 
-            {status === 'loading' ? (
+            {isLoading ? (
               <div className="w-20 h-10 bg-gray-100 animate-pulse rounded-lg" />
-            ) : session ? (
+            ) : user ? (
               <div className="flex items-center space-x-4">
                 <Link
                   href={getDashboardLink()}
@@ -51,7 +98,7 @@ export function Navbar() {
                   <span>Dashboard</span>
                 </Link>
                 <button
-                  onClick={() => signOut({ callbackUrl: '/' })}
+                  onClick={handleSignOut}
                   className="flex items-center space-x-2 text-gray-600 hover:text-red-600 transition-colors"
                 >
                   <LogOut className="w-5 h-5" />
@@ -113,7 +160,7 @@ export function Navbar() {
             >
               About
             </Link>
-            {session ? (
+            {user ? (
               <>
                 <Link
                   href={getDashboardLink()}
@@ -124,7 +171,7 @@ export function Navbar() {
                 </Link>
                 <button
                   onClick={() => {
-                    signOut({ callbackUrl: '/' })
+                    handleSignOut()
                     setIsMenuOpen(false)
                   }}
                   className="block text-red-600 hover:text-red-700"

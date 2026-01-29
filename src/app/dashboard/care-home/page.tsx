@@ -1,7 +1,6 @@
-import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { authOptions } from '@/lib/auth'
+import { getCurrentUser } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import {
   Plus,
@@ -16,15 +15,15 @@ import {
 import { format } from 'date-fns'
 
 export default async function CareHomeDashboard() {
-  const session = await getServerSession(authOptions)
+  const user = await getCurrentUser()
 
-  if (!session || session.user.role !== 'CARE_HOME') {
+  if (!user || user.role !== 'CARE_HOME') {
     redirect('/login')
   }
 
   // Get care home profile
   const careHome = await prisma.careHome.findUnique({
-    where: { userId: session.user.id },
+    where: { userId: user.id },
     include: {
       shifts: {
         where: {

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
 import { z } from 'zod'
-import { authOptions } from '@/lib/auth'
+import { getCurrentUser } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { StaffType, ShiftType } from '@/generated/prisma'
 
@@ -115,13 +114,13 @@ const createShiftSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const user = await getCurrentUser()
 
-    if (!session) {
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    if (session.user.role !== 'CARE_HOME') {
+    if (user.role !== 'CARE_HOME') {
       return NextResponse.json(
         { error: 'Only care homes can post shifts' },
         { status: 403 }
@@ -129,7 +128,7 @@ export async function POST(request: NextRequest) {
     }
 
     const careHome = await prisma.careHome.findUnique({
-      where: { userId: session.user.id },
+      where: { userId: user.id },
     })
 
     if (!careHome) {
