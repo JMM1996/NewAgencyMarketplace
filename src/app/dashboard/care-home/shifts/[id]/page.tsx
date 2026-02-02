@@ -9,14 +9,13 @@ import {
   Banknote,
   MapPin,
   User,
-  Star,
   CheckCircle,
   XCircle,
   AlertCircle,
-  Shield,
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { BookingActions } from './BookingActions'
+import { StaffProfileCard } from '@/components/StaffProfileCard'
 
 export default async function CareHomeShiftDetailPage({
   params,
@@ -39,7 +38,7 @@ export default async function CareHomeShiftDetailPage({
     redirect('/login')
   }
 
-  // Get shift with bookings
+  // Get shift with bookings and staff details
   const shift = await prisma.shift.findUnique({
     where: { id, careHomeId: careHome.id },
     include: {
@@ -49,6 +48,10 @@ export default async function CareHomeShiftDetailPage({
             include: {
               user: {
                 select: { email: true },
+              },
+              qualifications: {
+                orderBy: { createdAt: 'desc' },
+                take: 5,
               },
             },
           },
@@ -111,7 +114,7 @@ export default async function CareHomeShiftDetailPage({
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <Banknote className="w-4 h-4 text-gray-400" />
-            <span>{shift.hourlyRate.toString()}/hr</span>
+            <span>£{shift.hourlyRate.toString()}/hr</span>
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <MapPin className="w-4 h-4 text-gray-400" />
@@ -133,20 +136,10 @@ export default async function CareHomeShiftDetailPage({
             <CheckCircle className="w-5 h-5 text-green-600" />
             <h2 className="text-lg font-semibold text-green-800">Shift Filled</h2>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-              <User className="w-6 h-6 text-green-600" />
-            </div>
-            <div>
-              <p className="font-semibold text-gray-900">
-                {confirmedBooking.careStaff.firstName} {confirmedBooking.careStaff.lastName}
-              </p>
-              <p className="text-sm text-gray-600">{confirmedBooking.careStaff.user.email}</p>
-              {confirmedBooking.careStaff.phone && (
-                <p className="text-sm text-gray-600">{confirmedBooking.careStaff.phone}</p>
-              )}
-            </div>
-          </div>
+          <StaffProfileCard
+            staff={confirmedBooking.careStaff}
+            showContactInfo={true}
+          />
         </div>
       )}
 
@@ -178,53 +171,35 @@ export default async function CareHomeShiftDetailPage({
             <div className="divide-y divide-gray-100">
               {pendingBookings.map((booking) => (
                 <div key={booking.id} className="p-6">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <User className="w-6 h-6 text-gray-400" />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900">
-                          {booking.careStaff.firstName} {booking.careStaff.lastName}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          {booking.careStaff.staffType.replace(/_/g, ' ')}
-                        </p>
-                        <div className="flex flex-wrap items-center gap-3 mt-2 text-sm">
-                          {booking.careStaff.yearsExperience > 0 && (
-                            <span className="text-gray-600">
-                              {booking.careStaff.yearsExperience} years exp.
-                            </span>
-                          )}
-                          {booking.careStaff.averageRating && (
-                            <span className="flex items-center text-gray-600">
-                              <Star className="w-4 h-4 text-amber-400 fill-current mr-1" />
-                              {booking.careStaff.averageRating.toString()}
-                            </span>
-                          )}
-                          {booking.careStaff.dbsVerified && (
-                            <span className="flex items-center text-green-600">
-                              <Shield className="w-4 h-4 mr-1" />
-                              DBS Verified
-                            </span>
-                          )}
-                        </div>
-                        {booking.staffNotes && (
-                          <p className="mt-2 text-sm text-gray-600 italic">
-                            &quot;{booking.staffNotes}&quot;
-                          </p>
-                        )}
-                        <p className="mt-2 text-xs text-gray-400">
-                          Applied {format(new Date(booking.appliedAt), 'd MMM yyyy, HH:mm')}
-                        </p>
-                      </div>
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Staff Profile Card */}
+                    <div className="lg:col-span-2">
+                      <StaffProfileCard staff={booking.careStaff} />
                     </div>
 
-                    <BookingActions
-                      bookingId={booking.id}
-                      shiftId={shift.id}
-                      staffName={`${booking.careStaff.firstName} ${booking.careStaff.lastName}`}
-                    />
+                    {/* Application Info & Actions */}
+                    <div className="flex flex-col justify-between">
+                      {booking.staffNotes && (
+                        <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+                          <p className="text-sm font-medium text-gray-700 mb-1">Application Note</p>
+                          <p className="text-sm text-gray-600 italic">
+                            &quot;{booking.staffNotes}&quot;
+                          </p>
+                        </div>
+                      )}
+
+                      <div>
+                        <p className="text-xs text-gray-400 mb-4">
+                          Applied {format(new Date(booking.appliedAt), 'd MMM yyyy, HH:mm')}
+                        </p>
+
+                        <BookingActions
+                          bookingId={booking.id}
+                          shiftId={shift.id}
+                          staffName={`${booking.careStaff.firstName} ${booking.careStaff.lastName}`}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
