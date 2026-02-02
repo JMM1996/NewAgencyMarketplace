@@ -20,9 +20,6 @@ const staffTypes = [
   { value: 'SUPPORT_WORKER', label: 'Support Worker' },
   { value: 'SENIOR_CARER', label: 'Senior Carer' },
   { value: 'CARE_ASSISTANT', label: 'Care Assistant' },
-  { value: 'ACTIVITIES_COORDINATOR', label: 'Activities Coordinator' },
-  { value: 'DOMESTIC_STAFF', label: 'Domestic Staff' },
-  { value: 'KITCHEN_STAFF', label: 'Kitchen Staff' },
   { value: 'OTHER', label: 'Other' },
 ]
 

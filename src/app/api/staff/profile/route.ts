@@ -15,11 +15,7 @@ const updateProfileSchema = z.object({
   county: z.string().optional().nullable(),
   postcode: z.string().min(1, 'Postcode is required'),
   staffType: z.nativeEnum(StaffType),
-  yearsExperience: z.number().min(0).max(50),
   hourlyRate: z.number().min(0).optional().nullable(),
-  dbsCertificateNumber: z.string().optional().nullable(),
-  dbsIssueDate: z.string().optional().nullable(),
-  rightToWorkVerified: z.boolean(),
 })
 
 export async function PATCH(request: NextRequest) {
@@ -58,11 +54,7 @@ export async function PATCH(request: NextRequest) {
         county: validated.county || null,
         postcode: validated.postcode,
         staffType: validated.staffType,
-        yearsExperience: validated.yearsExperience,
         hourlyRate: validated.hourlyRate || null,
-        dbsCertificateNumber: validated.dbsCertificateNumber || null,
-        dbsIssueDate: validated.dbsIssueDate ? new Date(validated.dbsIssueDate) : null,
-        rightToWorkVerified: validated.rightToWorkVerified,
       },
     })
 

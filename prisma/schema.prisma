@@ -8,7 +8,6 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 // ============================================
@@ -58,10 +57,14 @@ enum StaffType {
   SUPPORT_WORKER
   SENIOR_CARER
   CARE_ASSISTANT
-  ACTIVITIES_COORDINATOR
-  DOMESTIC_STAFF
-  KITCHEN_STAFF
   OTHER
+}
+
+enum VerificationStatus {
+  INCOMPLETE          // Profile not fully submitted
+  PENDING_REVIEW      // Submitted, awaiting admin review
+  VERIFIED            // Approved by admin, visible to care homes
+  REJECTED            // Rejected by admin, needs resubmission
 }
 
 model CareStaff {
@@ -86,16 +89,30 @@ model CareStaff {
 
   // Professional Info
   staffType           StaffType   @default(CARE_ASSISTANT)
-  yearsExperience     Int         @default(0)
+  yearsExperience     Int         @default(0) // Calculated from employment history
   hourlyRate          Decimal?    @db.Decimal(10, 2)
   availableForNights  Boolean     @default(false)
   availableForWeekends Boolean    @default(true)
   maxTravelDistance   Int         @default(10) // miles
 
-  // Verification Status
-  dbsVerified         Boolean     @default(false)
+  // DBS Verification
   dbsCertificateNumber String?
   dbsIssueDate        DateTime?
+  dbsOnUpdateService  Boolean     @default(false)
+  dbsCertificateUrl   String?     // Uploaded screenshot of DBS certificate
+
+  // Right to Work
+  rightToWorkConfirmed Boolean    @default(false)
+  rightToWorkDocumentUrl String?  // Uploaded right to work document
+
+  // Verification Status (for admin review)
+  verificationStatus  VerificationStatus @default(INCOMPLETE)
+  verificationNotes   String?     // Admin notes on verification
+  verifiedAt          DateTime?   // When admin verified
+  verifiedBy          String?     // Admin user ID who verified
+
+  // Legacy fields (kept for backwards compatibility)
+  dbsVerified         Boolean     @default(false)
   rightToWorkVerified Boolean     @default(false)
   identityVerified    Boolean     @default(false)
 
@@ -112,8 +129,30 @@ model CareStaff {
   bookings            Booking[]
   reviewsReceived     Review[]      @relation("StaffReviews")
   availability        StaffAvailability[]
+  employmentHistory   EmploymentHistory[]
 
   @@map("care_staff")
+}
+
+// Employment History for recruitment checks
+model EmploymentHistory {
+  id              String    @id @default(cuid())
+  careStaffId     String
+  careStaff       CareStaff @relation(fields: [careStaffId], references: [id], onDelete: Cascade)
+
+  employerName    String
+  jobTitle        String
+  startDate       DateTime
+  endDate         DateTime?   // Null if current job
+  isCurrent       Boolean     @default(false)
+  responsibilities String?
+  reasonForLeaving String?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([careStaffId])
+  @@map("employment_history")
 }
 
 model Qualification {

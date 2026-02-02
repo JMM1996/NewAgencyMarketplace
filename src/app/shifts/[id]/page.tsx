@@ -26,9 +26,6 @@ const staffTypeLabels: Record<StaffType, string> = {
   SUPPORT_WORKER: 'Support Worker',
   SENIOR_CARER: 'Senior Carer',
   CARE_ASSISTANT: 'Care Assistant',
-  ACTIVITIES_COORDINATOR: 'Activities Coordinator',
-  DOMESTIC_STAFF: 'Domestic Staff',
-  KITCHEN_STAFF: 'Kitchen Staff',
   OTHER: 'Other',
 }
 

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { User, Phone, MapPin, Briefcase, FileText, Shield, Loader2, CheckCircle } from 'lucide-react'
+import { User, Phone, MapPin, Briefcase, Loader2, CheckCircle } from 'lucide-react'
 import { StaffType } from '@/generated/prisma'
 import type { CareStaff } from '@/generated/prisma'
 
@@ -12,9 +12,6 @@ const staffTypeOptions: { value: StaffType; label: string }[] = [
   { value: 'SUPPORT_WORKER', label: 'Support Worker' },
   { value: 'SENIOR_CARER', label: 'Senior Carer' },
   { value: 'CARE_ASSISTANT', label: 'Care Assistant' },
-  { value: 'ACTIVITIES_COORDINATOR', label: 'Activities Coordinator' },
-  { value: 'DOMESTIC_STAFF', label: 'Domestic Staff' },
-  { value: 'KITCHEN_STAFF', label: 'Kitchen Staff' },
   { value: 'OTHER', label: 'Other' },
 ]
 
@@ -39,13 +36,7 @@ export function ProfileForm({ careStaff }: ProfileFormProps) {
     county: careStaff.county || '',
     postcode: careStaff.postcode || '',
     staffType: careStaff.staffType,
-    yearsExperience: careStaff.yearsExperience,
     hourlyRate: careStaff.hourlyRate?.toString() || '',
-    dbsCertificateNumber: careStaff.dbsCertificateNumber || '',
-    dbsIssueDate: careStaff.dbsIssueDate
-      ? new Date(careStaff.dbsIssueDate).toISOString().split('T')[0]
-      : '',
-    rightToWorkVerified: careStaff.rightToWorkVerified,
   })
 
   const handleChange = (
@@ -70,9 +61,7 @@ export function ProfileForm({ careStaff }: ProfileFormProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          yearsExperience: parseInt(formData.yearsExperience.toString()),
           hourlyRate: formData.hourlyRate ? parseFloat(formData.hourlyRate) : null,
-          dbsIssueDate: formData.dbsIssueDate || null,
         }),
       })
 
@@ -282,22 +271,6 @@ export function ProfileForm({ careStaff }: ProfileFormProps) {
           </div>
 
           <div>
-            <label htmlFor="yearsExperience" className="block text-sm font-medium text-gray-700 mb-1">
-              Years of Experience
-            </label>
-            <input
-              type="number"
-              id="yearsExperience"
-              name="yearsExperience"
-              value={formData.yearsExperience}
-              onChange={handleChange}
-              min="0"
-              max="50"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-            />
-          </div>
-
-          <div>
             <label htmlFor="hourlyRate" className="block text-sm font-medium text-gray-700 mb-1">
               Preferred Hourly Rate (£)
             </label>
@@ -314,65 +287,6 @@ export function ProfileForm({ careStaff }: ProfileFormProps) {
             />
           </div>
         </div>
-      </div>
-
-      {/* Verification */}
-      <div className="p-6 border-b border-gray-100">
-        <div className="flex items-center gap-2 mb-4">
-          <Shield className="w-5 h-5 text-teal-600" />
-          <h2 className="text-lg font-semibold text-gray-900">Verification</h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="dbsCertificateNumber" className="block text-sm font-medium text-gray-700 mb-1">
-              <FileText className="w-4 h-4 inline mr-1" />
-              DBS Certificate Number
-            </label>
-            <input
-              type="text"
-              id="dbsCertificateNumber"
-              name="dbsCertificateNumber"
-              value={formData.dbsCertificateNumber}
-              onChange={handleChange}
-              placeholder="001234567890"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="dbsIssueDate" className="block text-sm font-medium text-gray-700 mb-1">
-              DBS Issue Date
-            </label>
-            <input
-              type="date"
-              id="dbsIssueDate"
-              name="dbsIssueDate"
-              value={formData.dbsIssueDate}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-            />
-          </div>
-
-          <div className="md:col-span-2">
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                name="rightToWorkVerified"
-                checked={formData.rightToWorkVerified}
-                onChange={handleChange}
-                className="w-5 h-5 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
-              />
-              <span className="text-sm text-gray-700">
-                I confirm I have the right to work in the UK
-              </span>
-            </label>
-          </div>
-        </div>
-
-        <p className="mt-4 text-sm text-gray-500">
-          Note: DBS and right to work status will be verified by our team before you can be marked as verified.
-        </p>
       </div>
 
       {/* Submit */}
