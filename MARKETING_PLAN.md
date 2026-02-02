@@ -2,8 +2,8 @@
 
 ## Care Staffing Marketplace Marketing Strategy
 
-**Document Version:** 1.0
-**Last Updated:** January 2026
+**Document Version:** 1.1
+**Last Updated:** February 2026
 **Owner:** Marketing Team
 
 ---
@@ -16,10 +16,11 @@
 4. [Value Proposition & Messaging](#value-proposition--messaging)
 5. [Brand Positioning](#brand-positioning)
 6. [Channel Strategy](#channel-strategy)
-7. [Phased Marketing Timeline](#phased-marketing-timeline)
-8. [Budget Allocation](#budget-allocation)
-9. [KPIs & Success Metrics](#kpis--success-metrics)
-10. [Competitive Differentiation](#competitive-differentiation)
+7. [B2B Sales Strategy](#b2b-sales-strategy)
+8. [Phased Marketing Timeline](#phased-marketing-timeline)
+9. [Budget Allocation](#budget-allocation)
+10. [KPIs & Success Metrics](#kpis--success-metrics)
+11. [Competitive Differentiation](#competitive-differentiation)
 
 ---
 
@@ -244,16 +245,18 @@ The intersection of:
 | **Referral Seeding** | Identify 5 care workers in target areas, offer £20 credit per referral | £200 | 10 sign-ups |
 | **LinkedIn Outreach** | Connect with care professionals, share platform vision | £0 (time only) | 5 sign-ups |
 
-#### Demand Side (Care Homes)
+#### Demand Side (Care Homes) - B2B Direct Approach
 
 | Channel | Tactic | Budget | Expected Results |
 |---------|--------|--------|------------------|
-| **Cold Email** | Targeted outreach to care home managers in pilot areas (personalised, value-led) | £50 (email tool) | 5 meetings |
-| **LinkedIn** | Connect with care home managers, share industry content, soft pitch | £0 (time only) | 3 sign-ups |
-| **Local Networks** | Attend local care provider forums and networking events | £100 (travel) | 2 sign-ups |
-| **Referrals** | Ask early adopters for introductions to other care homes | £0 | Ongoing |
+| **Cold Calling** | Direct phone outreach to care home managers during off-peak hours (10am-11am, 2pm-3pm). Script focused on agency cost pain point. | £0 (time only) | 8 conversations/day, 2 meetings/week |
+| **Cold Email Sequences** | 5-touch personalised sequences using Apollo.io or Lemlist. Research each home before outreach. | £100/month (tools) | 15% reply rate, 5 meetings/month |
+| **LinkedIn Direct Outreach** | Connect with care home managers, send personalised voice notes, engage with their content first | £0 (time only) | 10 connections/week, 3 meetings/month |
+| **Door-to-Door Visits** | Visit care homes in pilot area with leave-behind materials. Ask for 5 minutes with manager. | £150 (travel + materials) | 2 sign-ups/week |
+| **Local Care Networks** | Attend registered manager forums, local authority provider meetings, care association events | £100 (travel) | 3 warm leads/event |
+| **Referral Incentives** | Offer existing care homes £50 credit for successful referrals to other homes | £0 (until referrals convert) | Ongoing |
 
-**Total Pre-Launch Budget:** ~£500
+**Total Pre-Launch Budget:** ~£650
 
 ---
 
@@ -270,17 +273,28 @@ The intersection of:
 | **TikTok Organic** | Short-form content: day-in-the-life, tips for care workers, platform features | £0 (time) | Brand awareness |
 | **Referral Programme** | £25 for referrer + £10 bonus for new worker after first shift | £500/month | 20 sign-ups/month |
 
-#### Demand Side (Care Homes)
+#### Demand Side (Care Homes) - B2B Direct Sales
 
 | Channel | Tactic | Budget | Expected Results |
 |---------|--------|--------|------------------|
-| **Google Ads** | "Care home staffing solutions", "Emergency care cover" | £400/month | 10 leads/month |
-| **LinkedIn Ads** | Targeted to care home managers and owners | £300/month | 8 leads/month |
-| **Content Marketing** | Blog posts on staffing challenges, SEO for care staffing terms | £200/month (writer) | Long-term SEO value |
-| **Case Studies** | Document early success stories, share across channels | £0 | Trust building |
-| **Trade Publications** | Sponsored content in Care Home Professional | £500/quarter | Brand awareness |
+| **Dedicated Sales Rep** | Hire part-time SDR or allocate founder time (20hrs/week) for outbound sales | £1,000/month (or founder time) | 15 qualified meetings/month |
+| **Account-Based Outreach** | Target care home groups (3+ homes) with personalised multi-channel campaigns | £200/month (tools) | 2 group sign-ups/month |
+| **LinkedIn Sales Navigator** | Advanced search and InMail to decision-makers at target accounts | £80/month | 20 InMails/month, 5 responses |
+| **Demo Calls** | Structured 20-min demo calls with screen share showing platform value | £0 | 40% demo-to-signup rate |
+| **CQC Database Mining** | Extract care home contacts from CQC register, prioritise by rating and size | £0 (public data) | 500 prospects/month |
+| **Local Authority Relationships** | Meet with council commissioners and adult social care teams | £50/month (travel) | 2 introductions/month |
+| **Care Home Group Pitches** | Identify and pitch to multi-site operators (HC-One, Barchester, etc.) | £100/month (travel) | 1 group meeting/quarter |
+| **Trade Publications** | Sponsored content + advertorials in Care Home Professional, CMM | £500/quarter | Brand awareness + leads |
 
-**Total Growth Phase Budget:** ~£2,500/month
+#### Inbound Lead Support
+
+| Channel | Tactic | Budget | Expected Results |
+|---------|--------|--------|------------------|
+| **Google Ads** | "Care home staffing solutions", "Emergency care cover" | £300/month | 8 leads/month |
+| **Content Marketing** | Blog posts on staffing challenges, SEO for care staffing terms | £200/month (writer) | Long-term SEO value |
+| **Case Studies** | Document early success stories, use in sales conversations | £0 | Trust building |
+
+**Total Growth Phase Budget:** ~£3,200/month
 
 ---
 
@@ -288,17 +302,229 @@ The intersection of:
 
 **Goal:** 200+ completed bookings, establish market presence
 
-#### Expanded Channels
+#### B2B Sales Team Expansion
+
+| Channel | Tactic | Budget |
+|---------|--------|--------|
+| **Full-time Sales Hire** | Dedicated Account Executive for care home acquisition | £2,500/month (salary portion) |
+| **Sales Enablement** | CRM (HubSpot Sales), call recording (Gong/Chorus), proposal tools | £300/month |
+| **Enterprise Outreach** | Target top 50 care home groups nationally with executive-level campaigns | £500/month |
+| **Partnership Sales** | Co-selling agreements with care management software vendors | £0 (revenue share) |
+
+#### Strategic Partnerships & Channels
+
+| Channel | Tactic | Budget |
+|---------|--------|--------|
+| **Care Associations** | Become preferred supplier for NCF, Care England, local care associations | £500/year (membership) |
+| **Training Providers** | Partner with care training academies - offer platform access to graduates | £0 (mutual benefit) |
+| **Insurance Partners** | Bundle offering with care worker insurance providers | £0 (revenue share) |
+| **Accountants/Bookkeepers** | Referral programme with accountants serving care homes | £0 (referral fees) |
+
+#### Events & Field Marketing
+
+| Channel | Tactic | Budget |
+|---------|--------|--------|
+| **Trade Shows** | Exhibit at Care Show, Health+Care, Care Managers Show | £2,000/event |
+| **Hosted Events** | "Future of Care Staffing" breakfast events in target cities | £500/event |
+| **Webinars** | Monthly webinars on staffing challenges with guest speakers | £0 (time only) |
+
+#### Brand & Inbound Support
 
 | Channel | Tactic | Budget |
 |---------|--------|--------|
 | **PR & Media** | Press releases on funding/milestones, founder interviews in trade press | £500/month |
-| **Partnerships** | Care associations, training providers, DBS check services | £0 (time) |
-| **Events** | Exhibit at Care Show, Health+Care conference | £2,000/event |
 | **SEO Investment** | Technical SEO, link building, content expansion | £1,000/month |
-| **Retargeting** | Pixel-based retargeting for site visitors | £300/month |
+| **Retargeting** | Pixel-based retargeting for site visitors who didn't convert | £300/month |
 
-**Total Scale Phase Budget:** ~£5,000/month
+**Total Scale Phase Budget:** ~£6,500/month
+
+---
+
+## B2B Sales Strategy
+
+### Sales Philosophy
+
+Care homes are relationship-driven businesses. They buy from people they trust, not faceless platforms. Our B2B approach prioritises:
+
+1. **Personal relationships** over mass marketing
+2. **Solving specific pain points** over feature selling
+3. **Local presence** over national campaigns
+4. **Proof and testimonials** over promises
+
+### Target Account Tiers
+
+#### Tier 1: Strategic Accounts (Care Home Groups)
+- **Definition:** Operators with 3+ care homes
+- **Examples:** HC-One, Barchester, Care UK, Four Seasons, regional groups
+- **Approach:** Executive-level outreach, custom proposals, pilot programmes
+- **Value:** High volume, reference customers, market credibility
+- **Target:** 5 groups in Year 1
+
+#### Tier 2: Priority Accounts (High-Volume Single Homes)
+- **Definition:** 50+ bed homes with Good/Outstanding CQC rating
+- **Approach:** Personal outreach (call + email + LinkedIn), on-site demos
+- **Value:** High shift volume, quality-focused (good fit)
+- **Target:** 30 homes in Year 1
+
+#### Tier 3: Standard Accounts (All Other Care Homes)
+- **Definition:** All other registered care homes in target geography
+- **Approach:** Scaled outreach (email sequences, LinkedIn automation)
+- **Value:** Market coverage, network effects
+- **Target:** 100 homes in Year 1
+
+### Account-Based Marketing (ABM) Playbook
+
+#### Tier 1 Campaign (Care Home Groups)
+
+**Research Phase (Week 1-2):**
+- Identify key decision-makers (Operations Director, Regional Managers)
+- Research their current staffing challenges (Glassdoor, news, CQC reports)
+- Map organisational structure and buying process
+- Find mutual connections for warm introductions
+
+**Engagement Phase (Week 3-6):**
+| Touch | Channel | Content |
+|-------|---------|---------|
+| 1 | LinkedIn | Connect with personalised note mentioning specific challenge |
+| 2 | Email | Send relevant industry insight (not a pitch) |
+| 3 | LinkedIn | Comment thoughtfully on their posts |
+| 4 | Email | Share case study from similar organisation |
+| 5 | Phone | Direct call with specific value proposition |
+| 6 | Email | Offer pilot programme with 3 homes |
+| 7 | In-person | Request meeting at their offices or neutral venue |
+
+**Conversion Phase (Week 7-10):**
+- Conduct on-site discovery meeting
+- Deliver custom ROI analysis for their portfolio
+- Propose pilot programme (3 months, 3 homes)
+- Negotiate enterprise terms
+
+#### Tier 2 Campaign (Priority Single Homes)
+
+**Week 1:**
+- Day 1: Personalised email (reference CQC report or local news)
+- Day 3: LinkedIn connection request
+- Day 5: Follow-up email with case study
+
+**Week 2:**
+- Day 8: Phone call attempt
+- Day 10: Voicemail + email combo
+- Day 12: LinkedIn message offering quick call
+
+**Week 3:**
+- Day 15: "Break-up" email offering value regardless
+- Day 17: Add to nurture sequence if no response
+
+#### Tier 3 Campaign (Scaled Outreach)
+
+- 5-email automated sequence over 3 weeks
+- LinkedIn connection with standard message
+- Retargeting ads to engaged prospects
+- Quarterly newsletter with industry insights
+
+### B2B Sales Process
+
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│   PROSPECT  │───▶│   QUALIFY   │───▶│    DEMO     │───▶│  PROPOSAL   │───▶│    CLOSE    │
+│             │    │             │    │             │    │             │    │             │
+│ • Identify  │    │ • BANT      │    │ • 20-min    │    │ • ROI calc  │    │ • Contract  │
+│ • Research  │    │ • Pain pts  │    │ • Platform  │    │ • Custom    │    │ • Onboard   │
+│ • Outreach  │    │ • Timeline  │    │ • Q&A       │    │ • Terms     │    │ • Support   │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+      │                  │                  │                  │                  │
+      ▼                  ▼                  ▼                  ▼                  ▼
+   50 leads         30 qualified        15 demos          8 proposals        5 customers
+   (per month)       (60%)              (50%)              (53%)             (63%)
+```
+
+### Qualification Framework (BANT+)
+
+Before investing demo time, qualify prospects on:
+
+| Criteria | Questions | Ideal Answer |
+|----------|-----------|--------------|
+| **Budget** | "What do you currently spend on agency staff monthly?" | £500+/month |
+| **Authority** | "Who makes decisions about staffing solutions?" | Speaking to decision-maker |
+| **Need** | "How often do you struggle to fill last-minute shifts?" | Weekly or more |
+| **Timeline** | "When are you looking to have a solution in place?" | Within 1-2 months |
+| **Fit** | "How many beds/staff do you have?" | 20+ beds |
+
+### Sales Collateral Requirements
+
+#### Essential Materials (Pre-Launch)
+
+| Asset | Purpose | Format |
+|-------|---------|--------|
+| **One-Pager** | Quick overview for cold outreach | PDF, 1 page |
+| **Pitch Deck** | Structured demo presentation | Google Slides, 10 slides |
+| **ROI Calculator** | Quantify savings vs agencies | Google Sheet/Web tool |
+| **FAQ Document** | Address common objections | PDF, 2 pages |
+| **Leave-Behind Brochure** | Physical material for visits | Printed, tri-fold |
+
+#### Growth Phase Materials
+
+| Asset | Purpose | Format |
+|-------|---------|--------|
+| **Case Study Template** | Document customer success | PDF, 2 pages |
+| **Video Testimonials** | Social proof for website/sales | 60-90 second videos |
+| **Comparison Sheet** | Us vs traditional agencies | PDF, 1 page |
+| **Pilot Programme Guide** | Outline trial terms | PDF, 2 pages |
+| **Implementation Guide** | Onboarding documentation | PDF, 4 pages |
+
+### Objection Handling Guide
+
+| Objection | Response |
+|-----------|----------|
+| "We already use an agency" | "Most of our customers do too. They use us for overflow and cost savings. How much are you currently paying per hour through your agency?" |
+| "We don't have time to try something new" | "I understand - that's exactly why we've made it simple. You can post your first shift in 60 seconds. Would a 20-minute demo be worth your time to see if it could save you hours each week?" |
+| "How do I know the workers are qualified?" | "Every worker on our platform has verified experience and DBS. Plus, you see their full profile before accepting - unlike agency workers who show up unknown." |
+| "What if no one applies?" | "We only launch in areas where we have good worker coverage. In your postcode, we currently have X workers available. We also offer a satisfaction guarantee for your first 3 shifts." |
+| "It's too cheap - what's the catch?" | "No catch. We're a technology platform, not a traditional agency with offices and middle managers. We pass those savings directly to you and the workers." |
+| "We need to think about it" | "Of course. What specific concerns would you want to address before moving forward? I'm happy to put together information on those points." |
+
+### Sales Tools & Tech Stack
+
+| Category | Tool | Cost | Purpose |
+|----------|------|------|---------|
+| **CRM** | HubSpot Free → Sales Hub | £0-400/month | Pipeline management |
+| **Email Sequences** | Apollo.io or Lemlist | £80-150/month | Automated outreach |
+| **LinkedIn** | Sales Navigator | £80/month | Prospect research & InMail |
+| **Calls** | Aircall or RingCentral | £25/user/month | Call tracking & recording |
+| **Proposals** | PandaDoc or Qwilr | £30/month | Professional proposals |
+| **Scheduling** | Calendly | £0-12/month | Meeting booking |
+| **Video** | Loom | £0-15/month | Async video messages |
+
+### Sales KPIs & Targets
+
+#### Activity Metrics (Weekly)
+
+| Metric | Pre-Launch | Growth | Scale |
+|--------|------------|--------|-------|
+| Outbound emails sent | 50 | 100 | 200 |
+| Cold calls made | 25 | 50 | 100 |
+| LinkedIn connections | 20 | 40 | 60 |
+| Discovery calls booked | 3 | 8 | 15 |
+| Demos delivered | 2 | 5 | 10 |
+
+#### Conversion Metrics (Monthly)
+
+| Metric | Target |
+|--------|--------|
+| Lead → Qualified | 60% |
+| Qualified → Demo | 50% |
+| Demo → Proposal | 50% |
+| Proposal → Close | 60% |
+| **Overall Lead → Close** | **9%** |
+
+#### Revenue Metrics (Monthly, Post-Monetisation)
+
+| Metric | Target |
+|--------|--------|
+| Average deal size | £200/month GMV |
+| Sales cycle length | 2-4 weeks |
+| CAC (Customer Acquisition Cost) | <£150 |
+| Payback period | <3 months |
 
 ---
 
@@ -371,35 +597,53 @@ The intersection of:
 
 | Phase | Timeline | Monthly Budget | Total |
 |-------|----------|----------------|-------|
-| Foundation | Jan-Feb 2026 | £100 | £200 |
-| Pre-Launch | Feb-April 2026 | £200 | £600 |
-| MVP Launch | May 2026 | £500 | £500 |
-| Growth | June-Sept 2026 | £2,500 | £10,000 |
-| Scale | Oct-Dec 2026 | £5,000 | £15,000 |
-| **Total Year 1** | | | **£26,300** |
+| Foundation | Jan-Feb 2026 | £150 | £300 |
+| Pre-Launch | Feb-April 2026 | £650 | £1,950 |
+| MVP Launch | May 2026 | £800 | £800 |
+| Growth | June-Sept 2026 | £3,200 | £12,800 |
+| Scale | Oct-Dec 2026 | £6,500 | £19,500 |
+| **Total Year 1** | | | **£35,350** |
 
 ### Budget Split by Channel (Growth Phase)
 
 ```
-Paid Social (Facebook/Instagram): 30%
-Paid Search (Google): 25%
-Content & SEO: 15%
-Referral Programme: 15%
-Events & PR: 10%
+B2B Direct Sales (SDR, tools, travel): 40%
+Paid Social (Facebook/Instagram - workers): 15%
+Paid Search (Google): 12%
+Content & SEO: 10%
+Referral Programme: 10%
+Events & PR: 8%
 Tools & Software: 5%
 ```
 
-### Recommended Tools
+### Budget Split by Channel (Scale Phase)
 
-| Category | Tool | Cost |
-|----------|------|------|
-| Email Marketing | Mailchimp or Resend | £0-50/month |
-| Social Scheduling | Buffer or Later | £0-15/month |
-| Landing Pages | Webflow or built-in | £0-20/month |
-| Analytics | Google Analytics 4, Mixpanel | £0 |
-| CRM | HubSpot Free or Notion | £0 |
-| Design | Canva Pro | £10/month |
-| Ads Management | Meta Business Suite, Google Ads | Included in ad spend |
+```
+B2B Sales Team & Enablement: 50%
+Events & Field Marketing: 15%
+Partnerships: 8%
+Paid Digital (Search + Social): 12%
+Content & SEO: 10%
+PR & Brand: 5%
+```
+
+### Recommended Tools (B2B Sales Stack)
+
+| Category | Tool | Cost | Priority |
+|----------|------|------|----------|
+| **CRM** | HubSpot Free → Sales Hub | £0-400/month | Essential |
+| **Email Sequences** | Apollo.io | £80/month | Essential |
+| **LinkedIn** | Sales Navigator | £80/month | Essential |
+| **Scheduling** | Calendly | £0-12/month | Essential |
+| **Proposals** | PandaDoc | £30/month | Growth |
+| **Call Tracking** | Aircall | £25/user/month | Growth |
+| **Video Messages** | Loom | £0-15/month | Nice-to-have |
+| **Analytics** | Google Analytics 4, Mixpanel | £0 | Essential |
+| **Design** | Canva Pro | £10/month | Essential |
+| **Email Marketing** | Mailchimp or Resend | £0-50/month | Essential |
+
+**Essential tools budget:** ~£180/month
+**Full stack budget:** ~£350/month
 
 ---
 
@@ -564,6 +808,7 @@ Recommend creating a simple dashboard (Google Sheets or Notion) tracking:
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 1.0 | January 2026 | Marketing Team | Initial creation |
+| 1.1 | February 2026 | Marketing Team | Added B2B Sales Strategy section, enhanced demand-side channel strategy with direct sales tactics, ABM playbook, sales collateral requirements, and objection handling |
 
 ---
 
