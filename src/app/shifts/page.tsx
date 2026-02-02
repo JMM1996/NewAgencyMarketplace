@@ -243,7 +243,7 @@ export default async function ShiftsPage({
                     <div className="flex items-center gap-1">
                       <Banknote className="w-5 h-5 text-teal-600" />
                       <span className="text-lg font-bold text-teal-600">
-                        {shift.hourlyRate.toString()}
+                        £{shift.hourlyRate.toString()}
                       </span>
                       <span className="text-sm text-gray-500">/hr</span>
                     </div>

@@ -155,7 +155,7 @@ export default async function ShiftDetailPage({
                   </div>
                   <div>
                     <p className="text-xs text-gray-500">Pay Rate</p>
-                    <p className="font-medium text-gray-900">{shift.hourlyRate.toString()}/hr</p>
+                    <p className="font-medium text-gray-900">£{shift.hourlyRate.toString()}/hr</p>
                   </div>
                 </div>
 
@@ -218,19 +218,36 @@ export default async function ShiftDetailPage({
             {/* Pay Summary */}
             <div className="bg-gradient-to-br from-teal-600 to-teal-700 rounded-xl p-6 text-white">
               <h3 className="text-sm font-medium text-teal-100 mb-1">Estimated Earnings</h3>
-              <p className="text-3xl font-bold mb-4">
-                {shift.totalPay?.toString() || (workingMinutes / 60 * Number(shift.hourlyRate)).toFixed(2)}
-              </p>
-              <div className="space-y-2 text-sm text-teal-100">
-                <div className="flex justify-between">
-                  <span>Hourly Rate</span>
-                  <span>{shift.hourlyRate.toString()}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Working Hours</span>
-                  <span>{(workingMinutes / 60).toFixed(1)}hrs</span>
-                </div>
-              </div>
+              {(() => {
+                const grossPay = shift.totalPay ? Number(shift.totalPay) : (workingMinutes / 60 * Number(shift.hourlyRate));
+                const platformFee = grossPay * 0.15;
+                const netPay = grossPay - platformFee;
+                return (
+                  <>
+                    <p className="text-3xl font-bold mb-4">
+                      £{netPay.toFixed(2)}
+                    </p>
+                    <div className="space-y-2 text-sm text-teal-100">
+                      <div className="flex justify-between">
+                        <span>Hourly Rate</span>
+                        <span>£{shift.hourlyRate.toString()}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Working Hours</span>
+                        <span>{(workingMinutes / 60).toFixed(1)}hrs</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Gross Pay</span>
+                        <span>£{grossPay.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between border-t border-teal-500 pt-2 mt-2">
+                        <span>Platform Fee (15%)</span>
+                        <span>-£{platformFee.toFixed(2)}</span>
+                      </div>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
 
             {/* Care Home Info */}

@@ -216,7 +216,7 @@ export default async function CareHomeDashboard() {
                         </span>
                         <span className="flex items-center">
                           <Banknote className="w-4 h-4 mr-1" />
-                          {shift.hourlyRate.toString()}/hr
+                          £{shift.hourlyRate.toString()}/hr
                         </span>
                       </div>
                     </div>
