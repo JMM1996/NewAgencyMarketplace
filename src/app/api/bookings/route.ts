@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { getCurrentUser } from '@/lib/auth'
 import { prisma } from '@/lib/db'
+import { sendBookingRequestEmail } from '@/lib/email'
 
 // POST - Apply for a shift (care staff only)
 const applySchema = z.object({
@@ -104,6 +105,29 @@ export async function POST(request: NextRequest) {
         link: `/dashboard/care-home/shifts/${shift.id}`,
       },
     })
+
+    // Send email notification to care home
+    const careHomeUser = await prisma.user.findUnique({
+      where: { id: shift.careHome.userId },
+      select: { email: true },
+    })
+
+    if (careHomeUser) {
+      try {
+        await sendBookingRequestEmail({
+          to: careHomeUser.email,
+          careHomeName: shift.careHome.name,
+          shiftTitle: shift.title,
+          shiftDate: shift.date,
+          shiftTime: `${shift.startTime} - ${shift.endTime}`,
+          staffName: `${careStaff.firstName} ${careStaff.lastName}`,
+          staffExperience: careStaff.yearsExperience,
+        })
+      } catch (emailError) {
+        console.error('Failed to send booking request email:', emailError)
+        // Don't fail the request if email fails
+      }
+    }
 
     return NextResponse.json(booking, { status: 201 })
   } catch (error) {
