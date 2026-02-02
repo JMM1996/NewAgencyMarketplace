@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { User, Phone, MapPin, Briefcase, Loader2, CheckCircle } from 'lucide-react'
+import { User, Phone, MapPin, Loader2, CheckCircle } from 'lucide-react'
 import { StaffType } from '@/generated/prisma'
 import type { CareStaff } from '@/generated/prisma'
 
@@ -36,7 +36,6 @@ export function ProfileForm({ careStaff }: ProfileFormProps) {
     county: careStaff.county || '',
     postcode: careStaff.postcode || '',
     staffType: careStaff.staffType,
-    hourlyRate: careStaff.hourlyRate?.toString() || '',
   })
 
   const handleChange = (
@@ -59,10 +58,7 @@ export function ProfileForm({ careStaff }: ProfileFormProps) {
       const response = await fetch('/api/staff/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          hourlyRate: formData.hourlyRate ? parseFloat(formData.hourlyRate) : null,
-        }),
+        body: JSON.stringify(formData),
       })
 
       if (!response.ok) {
@@ -141,6 +137,26 @@ export function ProfileForm({ careStaff }: ProfileFormProps) {
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             />
+          </div>
+
+          <div>
+            <label htmlFor="staffType" className="block text-sm font-medium text-gray-700 mb-1">
+              Role / Job Title *
+            </label>
+            <select
+              id="staffType"
+              name="staffType"
+              value={formData.staffType}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+            >
+              {staffTypeOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="md:col-span-2">
@@ -236,53 +252,6 @@ export function ProfileForm({ careStaff }: ProfileFormProps) {
               onChange={handleChange}
               required
               placeholder="SW1A 1AA"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Professional Information */}
-      <div className="p-6 border-b border-gray-100">
-        <div className="flex items-center gap-2 mb-4">
-          <Briefcase className="w-5 h-5 text-teal-600" />
-          <h2 className="text-lg font-semibold text-gray-900">Professional Information</h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="staffType" className="block text-sm font-medium text-gray-700 mb-1">
-              Role / Job Title *
-            </label>
-            <select
-              id="staffType"
-              name="staffType"
-              value={formData.staffType}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-            >
-              {staffTypeOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="hourlyRate" className="block text-sm font-medium text-gray-700 mb-1">
-              Preferred Hourly Rate (£)
-            </label>
-            <input
-              type="number"
-              id="hourlyRate"
-              name="hourlyRate"
-              value={formData.hourlyRate}
-              onChange={handleChange}
-              min="0"
-              step="0.50"
-              placeholder="15.00"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             />
           </div>

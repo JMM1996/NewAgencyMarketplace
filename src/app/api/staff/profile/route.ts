@@ -15,7 +15,6 @@ const updateProfileSchema = z.object({
   county: z.string().optional().nullable(),
   postcode: z.string().min(1, 'Postcode is required'),
   staffType: z.nativeEnum(StaffType),
-  hourlyRate: z.number().min(0).optional().nullable(),
 })
 
 export async function PATCH(request: NextRequest) {
@@ -54,7 +53,6 @@ export async function PATCH(request: NextRequest) {
         county: validated.county || null,
         postcode: validated.postcode,
         staffType: validated.staffType,
-        hourlyRate: validated.hourlyRate || null,
       },
     })
 
