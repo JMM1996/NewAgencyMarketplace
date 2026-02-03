@@ -7,13 +7,19 @@ let storageClient: ReturnType<typeof createClient> | null = null
 function getStorageClient() {
   if (!storageClient) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    // Use service role key for server-side operations, fall back to anon key
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    // Use service role key for server-side operations
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-    if (!supabaseUrl || !supabaseKey) {
-      throw new Error('Supabase credentials not configured')
+    if (!supabaseUrl) {
+      throw new Error('NEXT_PUBLIC_SUPABASE_URL not configured')
     }
 
+    if (!supabaseKey) {
+      console.error('SUPABASE_SERVICE_ROLE_KEY not found - storage uploads will fail')
+      throw new Error('Storage not configured. Please add SUPABASE_SERVICE_ROLE_KEY to .env')
+    }
+
+    console.log('Storage client initialized with service role key')
     storageClient = createClient(supabaseUrl, supabaseKey)
   }
   return storageClient
