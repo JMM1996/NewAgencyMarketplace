@@ -19,7 +19,14 @@ function getStorageClient() {
       throw new Error('Storage not configured. Please add SUPABASE_SERVICE_ROLE_KEY to .env')
     }
 
-    console.log('Storage client initialized with service role key')
+    // Check if it's still a placeholder
+    if (supabaseKey.includes('your-') || supabaseKey.length < 100) {
+      console.error('SUPABASE_SERVICE_ROLE_KEY appears to be a placeholder or invalid')
+      console.error('Key length:', supabaseKey.length, '(should be ~200+ characters)')
+      throw new Error('Invalid service role key. Please update SUPABASE_SERVICE_ROLE_KEY in .env')
+    }
+
+    console.log('Storage client initialized with service role key (length:', supabaseKey.length, ')')
     storageClient = createClient(supabaseUrl, supabaseKey)
   }
   return storageClient
@@ -55,16 +62,22 @@ export async function uploadFile(
       })
 
     if (error) {
+      // Log the full error for debugging
+      console.error('Supabase storage error:', {
+        message: error.message,
+        name: error.name,
+        cause: error.cause,
+        fullError: JSON.stringify(error, null, 2)
+      })
+
       // Provide more helpful error messages
       if (error.message?.includes('Bucket not found')) {
-        console.error(`Storage bucket "${bucket}" not found. Please create it in Supabase dashboard.`)
-        throw new Error(`Storage not configured. Please contact support.`)
+        throw new Error(`Storage bucket "${bucket}" not found. Create it in Supabase dashboard.`)
       }
       if (error.message?.includes('row-level security') || error.message?.includes('policy')) {
-        console.error('Storage RLS policy error:', error)
-        throw new Error('Permission denied. Please contact support.')
+        throw new Error('RLS policy error - check Supabase storage policies')
       }
-      throw error
+      throw new Error(`Upload failed: ${error.message}`)
     }
 
     // Get the public URL
