@@ -1,13 +1,14 @@
 import { createClient } from '@supabase/supabase-js'
 
 // Create a Supabase client for storage operations
-// Note: This uses the service role or anon key depending on context
+// Uses service role key for server-side uploads (bypasses RLS)
 let storageClient: ReturnType<typeof createClient> | null = null
 
 function getStorageClient() {
   if (!storageClient) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    // Use service role key for server-side operations, fall back to anon key
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
     if (!supabaseUrl || !supabaseKey) {
       throw new Error('Supabase credentials not configured')
