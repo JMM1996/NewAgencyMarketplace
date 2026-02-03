@@ -188,6 +188,9 @@ export function EmploymentHistoryList({ employmentHistory }: EmploymentHistoryLi
         <p className="text-sm text-gray-500 mt-1">
           Please provide your complete employment history for the last 5 years
         </p>
+        <p className="text-sm text-teal-600 mt-1">
+          We collate this data and display it simply to care homes
+        </p>
       </div>
 
       {/* Warning messages */}

@@ -55,7 +55,7 @@ export default function Home() {
                     <div key={idx} className="bg-white rounded-lg p-4 text-gray-900">
                       <div className="flex justify-between items-start mb-2">
                         <h3 className="font-semibold">{shift.role}</h3>
-                        <span className="text-teal-600 font-bold">{shift.rate}/hr</span>
+                        <span className="text-teal-600 font-bold">£{shift.rate}/hr</span>
                       </div>
                       <div className="flex items-center text-sm text-gray-500 space-x-4">
                         <span className="flex items-center">

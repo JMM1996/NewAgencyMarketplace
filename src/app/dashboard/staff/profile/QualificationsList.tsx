@@ -106,6 +106,9 @@ export function QualificationsList({ qualifications, careStaffId }: Qualificatio
             </button>
           )}
         </div>
+        <p className="text-sm text-teal-600 mt-2">
+          We collate this data and display it simply to care homes
+        </p>
       </div>
 
       {error && (

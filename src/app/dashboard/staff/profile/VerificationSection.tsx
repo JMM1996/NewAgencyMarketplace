@@ -168,6 +168,9 @@ export function VerificationSection({ careStaff }: VerificationSectionProps) {
         <p className="text-sm text-gray-500 mt-1">
           These documents are required for verification and are kept private
         </p>
+        <p className="text-sm text-teal-600 mt-1">
+          We collate this data and display it simply to care homes
+        </p>
       </div>
 
       {/* Verification Notes from Admin */}

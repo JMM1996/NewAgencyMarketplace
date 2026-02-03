@@ -86,10 +86,11 @@ export function ProfileForm({ careStaff }: ProfileFormProps) {
     <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-100">
       {/* Personal Information */}
       <div className="p-6 border-b border-gray-100">
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center gap-2 mb-2">
           <User className="w-5 h-5 text-teal-600" />
           <h2 className="text-lg font-semibold text-gray-900">Personal Information</h2>
         </div>
+        <p className="text-sm text-teal-600 mb-4">This data is shared directly with care homes</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -178,10 +179,11 @@ export function ProfileForm({ careStaff }: ProfileFormProps) {
 
       {/* Address */}
       <div className="p-6 border-b border-gray-100">
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center gap-2 mb-2">
           <MapPin className="w-5 h-5 text-teal-600" />
           <h2 className="text-lg font-semibold text-gray-900">Address</h2>
         </div>
+        <p className="text-sm text-gray-500 mb-4">We do not share this data with care homes</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
