@@ -14,6 +14,7 @@ import {
   TrendingUp,
 } from 'lucide-react'
 import { format } from 'date-fns'
+import { EarningsSection } from './EarningsSection'
 
 export default async function StaffDashboard() {
   const user = await getCurrentUser()
@@ -181,6 +182,11 @@ export default async function StaffDashboard() {
             <p className="text-3xl font-bold mt-1">{careStaff.totalShiftsCompleted}</p>
           </div>
         </div>
+      </div>
+
+      {/* Earnings Section */}
+      <div className="mb-8">
+        <EarningsSection />
       </div>
 
       {/* Upcoming Shifts */}

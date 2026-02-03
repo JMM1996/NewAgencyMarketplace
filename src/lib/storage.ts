@@ -35,14 +35,28 @@ export async function uploadFile(
   try {
     const client = getStorageClient()
 
+    // Convert File to ArrayBuffer for upload
+    const arrayBuffer = await file.arrayBuffer()
+    const buffer = new Uint8Array(arrayBuffer)
+
     const { data, error } = await client.storage
       .from(bucket)
-      .upload(path, file, {
+      .upload(path, buffer, {
         cacheControl: '3600',
         upsert: true,
+        contentType: file.type,
       })
 
     if (error) {
+      // Provide more helpful error messages
+      if (error.message?.includes('Bucket not found')) {
+        console.error(`Storage bucket "${bucket}" not found. Please create it in Supabase dashboard.`)
+        throw new Error(`Storage not configured. Please contact support.`)
+      }
+      if (error.message?.includes('row-level security') || error.message?.includes('policy')) {
+        console.error('Storage RLS policy error:', error)
+        throw new Error('Permission denied. Please contact support.')
+      }
       throw error
     }
 

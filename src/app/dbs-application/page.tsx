@@ -133,36 +133,27 @@ export default function DbsApplicationPage() {
           </ul>
         </div>
 
-        {/* External Links */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Useful Resources</h2>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            <a
-              href="https://www.gov.uk/request-copy-criminal-record"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-teal-300 hover:bg-teal-50 transition-colors"
-            >
-              <ExternalLink className="w-5 h-5 text-teal-600" />
-              <div>
-                <p className="font-medium text-gray-900">GOV.UK DBS Service</p>
-                <p className="text-sm text-gray-500">Request a basic DBS check</p>
-              </div>
-            </a>
-
+        {/* DBS Update Service - Prominent Link */}
+        <div className="bg-gradient-to-r from-teal-600 to-teal-700 rounded-xl shadow-sm p-8 mb-6">
+          <div className="text-center">
+            <h2 className="text-xl font-bold text-white mb-4">DBS Update Service</h2>
+            <p className="text-teal-100 mb-6 max-w-xl mx-auto">
+              The DBS Update Service allows employers to check your DBS certificate online,
+              saving you time and money. Registration costs £13 per year and keeps your
+              DBS certificate up to date.
+            </p>
             <a
               href="https://www.gov.uk/dbs-update-service"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-teal-300 hover:bg-teal-50 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white text-teal-700 font-semibold rounded-lg hover:bg-teal-50 transition-colors"
             >
-              <ExternalLink className="w-5 h-5 text-teal-600" />
-              <div>
-                <p className="font-medium text-gray-900">DBS Update Service</p>
-                <p className="text-sm text-gray-500">Register or check your status</p>
-              </div>
+              <ExternalLink className="w-5 h-5" />
+              Register for the DBS Update Service
             </a>
+            <p className="text-teal-100 text-sm mt-4">
+              Opens GOV.UK in a new tab
+            </p>
           </div>
         </div>
 

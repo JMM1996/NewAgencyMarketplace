@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { User, Phone, MapPin, Loader2, CheckCircle } from 'lucide-react'
+import { User, MapPin, Loader2, CheckCircle } from 'lucide-react'
 import { StaffType } from '@/generated/prisma'
 import type { CareStaff } from '@/generated/prisma'
 
@@ -124,23 +124,6 @@ export function ProfileForm({ careStaff }: ProfileFormProps) {
           </div>
 
           <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-              <Phone className="w-4 h-4 inline mr-1" />
-              Phone Number *
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder="07123 456789"
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-            />
-          </div>
-
-          <div>
             <label htmlFor="staffType" className="block text-sm font-medium text-gray-700 mb-1">
               Role / Job Title *
             </label>
@@ -177,15 +160,31 @@ export function ProfileForm({ careStaff }: ProfileFormProps) {
         </div>
       </div>
 
-      {/* Address */}
+      {/* Contact & Address */}
       <div className="p-6 border-b border-gray-100">
         <div className="flex items-center gap-2 mb-2">
           <MapPin className="w-5 h-5 text-teal-600" />
-          <h2 className="text-lg font-semibold text-gray-900">Address</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Contact &amp; Address</h2>
         </div>
         <p className="text-sm text-gray-500 mb-4">We do not share this data with care homes</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="md:col-span-2">
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+              Phone Number *
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              placeholder="07123 456789"
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+            />
+          </div>
+
           <div className="md:col-span-2">
             <label htmlFor="addressLine1" className="block text-sm font-medium text-gray-700 mb-1">
               Address Line 1

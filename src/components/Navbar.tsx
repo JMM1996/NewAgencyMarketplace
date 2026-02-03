@@ -76,12 +76,18 @@ export function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link href="/shifts" className="text-gray-600 hover:text-teal-600 transition-colors">
-              Find Shifts
-            </Link>
-            <Link href="/for-care-homes" className="text-gray-600 hover:text-teal-600 transition-colors">
-              For Care Homes
-            </Link>
+            {/* Find Shifts - visible to non-logged in users and care staff only */}
+            {(!user || user.user_metadata?.role !== 'CARE_HOME') && (
+              <Link href="/shifts" className="text-gray-600 hover:text-teal-600 transition-colors">
+                Find Shifts
+              </Link>
+            )}
+            {/* For Care Homes - visible to non-logged in users and care homes only */}
+            {(!user || user.user_metadata?.role !== 'CARE_STAFF') && (
+              <Link href="/for-care-homes" className="text-gray-600 hover:text-teal-600 transition-colors">
+                For Care Homes
+              </Link>
+            )}
             <Link href="/about" className="text-gray-600 hover:text-teal-600 transition-colors">
               About
             </Link>
@@ -139,20 +145,26 @@ export function Navbar() {
       {isMenuOpen && (
         <div className="md:hidden bg-white border-t border-gray-100">
           <div className="px-4 py-4 space-y-4">
-            <Link
-              href="/shifts"
-              className="block text-gray-600 hover:text-teal-600"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Find Shifts
-            </Link>
-            <Link
-              href="/for-care-homes"
-              className="block text-gray-600 hover:text-teal-600"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              For Care Homes
-            </Link>
+            {/* Find Shifts - visible to non-logged in users and care staff only */}
+            {(!user || user.user_metadata?.role !== 'CARE_HOME') && (
+              <Link
+                href="/shifts"
+                className="block text-gray-600 hover:text-teal-600"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Find Shifts
+              </Link>
+            )}
+            {/* For Care Homes - visible to non-logged in users and care homes only */}
+            {(!user || user.user_metadata?.role !== 'CARE_STAFF') && (
+              <Link
+                href="/for-care-homes"
+                className="block text-gray-600 hover:text-teal-600"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                For Care Homes
+              </Link>
+            )}
             <Link
               href="/about"
               className="block text-gray-600 hover:text-teal-600"

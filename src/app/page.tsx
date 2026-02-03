@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import {
   Shield,
@@ -10,8 +11,19 @@ import {
   MapPin,
   Calendar,
 } from 'lucide-react'
+import { getCurrentUser } from '@/lib/auth'
 
-export default function Home() {
+export default async function Home() {
+  // Redirect logged-in users to their dashboard
+  const user = await getCurrentUser()
+  if (user) {
+    if (user.role === 'CARE_HOME') {
+      redirect('/dashboard/care-home')
+    } else if (user.role === 'CARE_STAFF') {
+      redirect('/dashboard/staff')
+    }
+  }
+
   return (
     <div className="bg-white">
       {/* Hero Section */}

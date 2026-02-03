@@ -263,7 +263,7 @@ export function VerificationSection({ careStaff }: VerificationSectionProps) {
                   href="/dbs-application"
                   className="inline-flex items-center text-sm font-medium text-teal-600 hover:text-teal-700"
                 >
-                  Apply for Enhanced DBS
+                  How can CareConnect help with your DBS?
                   <ExternalLink className="w-4 h-4 ml-1" />
                 </Link>
               </div>
