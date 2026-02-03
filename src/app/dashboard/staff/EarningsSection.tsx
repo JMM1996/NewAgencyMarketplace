@@ -146,15 +146,7 @@ export function EarningsSection() {
       ) : data ? (
         <>
           {/* Summary Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 border-b border-gray-100">
-            <div className="bg-gray-50 rounded-lg p-4">
-              <p className="text-sm text-gray-500 mb-1">Gross Earnings</p>
-              <p className="text-xl font-bold text-gray-900">{formatCurrency(data.summary.totalGross)}</p>
-            </div>
-            <div className="bg-gray-50 rounded-lg p-4">
-              <p className="text-sm text-gray-500 mb-1">Platform Fees (15%)</p>
-              <p className="text-xl font-bold text-red-600">-{formatCurrency(data.summary.totalFees)}</p>
-            </div>
+          <div className="grid grid-cols-2 gap-4 p-6 border-b border-gray-100">
             <div className="bg-teal-50 rounded-lg p-4">
               <p className="text-sm text-teal-600 mb-1">Net Earnings</p>
               <p className="text-xl font-bold text-teal-700">{formatCurrency(data.summary.totalNet)}</p>

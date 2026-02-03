@@ -5,18 +5,16 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Menu, X, LogOut, LayoutDashboard } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-import type { User } from '@supabase/supabase-js'
 
-interface UserWithRole extends User {
-  user_metadata: {
-    role?: string
-    [key: string]: unknown
-  }
+interface AppUser {
+  id: string
+  email: string
+  role: 'CARE_STAFF' | 'CARE_HOME' | 'ADMIN'
 }
 
 export function Navbar() {
   const router = useRouter()
-  const [user, setUser] = useState<UserWithRole | null>(null)
+  const [user, setUser] = useState<AppUser | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
@@ -32,18 +30,23 @@ export function Navbar() {
 
     const supabase = createClient()
 
-    // Get initial session
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      setUser(user as UserWithRole | null)
-      setIsLoading(false)
+    // Fetch user with role from our API
+    const fetchUser = async () => {
+      try {
+        const response = await fetch('/api/auth/me')
+        const data = await response.json()
+        setUser(data.user)
+      } catch {
+        setUser(null)
+      } finally {
+        setIsLoading(false)
+      }
     }
-    getUser()
+    fetchUser()
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user as UserWithRole | null)
-      setIsLoading(false)
+    // Listen for auth changes and refetch user
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+      fetchUser()
     })
 
     return () => subscription.unsubscribe()
@@ -58,7 +61,7 @@ export function Navbar() {
 
   const getDashboardLink = () => {
     if (!user) return '/login'
-    return user.user_metadata?.role === 'CARE_HOME' ? '/dashboard/care-home' : '/dashboard/staff'
+    return user.role === 'CARE_HOME' ? '/dashboard/care-home' : '/dashboard/staff'
   }
 
   return (
@@ -77,13 +80,13 @@ export function Navbar() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             {/* Find Shifts - visible to non-logged in users and care staff only */}
-            {(!user || user.user_metadata?.role !== 'CARE_HOME') && (
+            {(!user || user.role !== 'CARE_HOME') && (
               <Link href="/shifts" className="text-gray-600 hover:text-teal-600 transition-colors">
                 Find Shifts
               </Link>
             )}
             {/* For Care Homes - visible to non-logged in users and care homes only */}
-            {(!user || user.user_metadata?.role !== 'CARE_STAFF') && (
+            {(!user || user.role !== 'CARE_STAFF') && (
               <Link href="/for-care-homes" className="text-gray-600 hover:text-teal-600 transition-colors">
                 For Care Homes
               </Link>
@@ -146,7 +149,7 @@ export function Navbar() {
         <div className="md:hidden bg-white border-t border-gray-100">
           <div className="px-4 py-4 space-y-4">
             {/* Find Shifts - visible to non-logged in users and care staff only */}
-            {(!user || user.user_metadata?.role !== 'CARE_HOME') && (
+            {(!user || user.role !== 'CARE_HOME') && (
               <Link
                 href="/shifts"
                 className="block text-gray-600 hover:text-teal-600"
@@ -156,7 +159,7 @@ export function Navbar() {
               </Link>
             )}
             {/* For Care Homes - visible to non-logged in users and care homes only */}
-            {(!user || user.user_metadata?.role !== 'CARE_STAFF') && (
+            {(!user || user.role !== 'CARE_STAFF') && (
               <Link
                 href="/for-care-homes"
                 className="block text-gray-600 hover:text-teal-600"
