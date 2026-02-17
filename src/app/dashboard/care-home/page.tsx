@@ -35,7 +35,7 @@ type Shift = {
   }[]
 }
 
-type FilterType = 'all' | 'open' | 'pending' | 'filled' | 'completed'
+type FilterType = 'all' | 'open' | 'pending' | 'filled'
 
 export default function CareHomeDashboard() {
   const [careHome, setCareHome] = useState<{ name: string; shifts: Shift[] } | null>(null)
@@ -65,11 +65,13 @@ export default function CareHomeDashboard() {
     fetchData()
   }, [])
 
-  const filteredShifts = allShifts.filter(shift => {
+  // Filter out completed shifts from main dashboard - they have their own page
+  const activeShifts = allShifts.filter(shift => shift.status !== 'COMPLETED')
+
+  const filteredShifts = activeShifts.filter(shift => {
     if (activeFilter === 'all') return true
     if (activeFilter === 'open') return shift.status === 'OPEN'
     if (activeFilter === 'filled') return shift.status === 'FILLED'
-    if (activeFilter === 'completed') return shift.status === 'COMPLETED'
     if (activeFilter === 'pending') {
       return shift.bookings.some(b => b.status === 'PENDING')
     }
@@ -196,24 +198,20 @@ export default function CareHomeDashboard() {
           </div>
         </button>
 
-        <button
-          onClick={() => setActiveFilter(activeFilter === 'completed' ? 'all' : 'completed')}
-          className={`bg-white rounded-xl p-6 shadow-sm border-2 transition-all text-left ${
-            activeFilter === 'completed' ? 'border-teal-500 ring-2 ring-teal-100' : 'border-gray-100 hover:border-gray-200'
-          }`}
+        <Link
+          href="/dashboard/care-home/completed"
+          className="bg-white rounded-xl p-6 shadow-sm border-2 border-gray-100 hover:border-teal-200 transition-all text-left block"
         >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-500">Completed</p>
               <p className="text-2xl font-bold text-gray-900 mt-1">{stats.completed}</p>
             </div>
-            <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-              activeFilter === 'completed' ? 'bg-teal-500' : 'bg-teal-100'
-            }`}>
-              <TrendingUp className={`w-6 h-6 ${activeFilter === 'completed' ? 'text-white' : 'text-teal-600'}`} />
+            <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-teal-100">
+              <TrendingUp className="w-6 h-6 text-teal-600" />
             </div>
           </div>
-        </button>
+        </Link>
       </div>
 
       {/* Active Filter Indicator */}
