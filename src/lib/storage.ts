@@ -7,26 +7,23 @@ let storageClient: ReturnType<typeof createClient> | null = null
 function getStorageClient() {
   if (!storageClient) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    // Use service role key for server-side operations
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    // Try service role key first, fall back to anon key
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
     if (!supabaseUrl) {
       throw new Error('NEXT_PUBLIC_SUPABASE_URL not configured')
     }
 
     if (!supabaseKey) {
-      console.error('SUPABASE_SERVICE_ROLE_KEY not found - storage uploads will fail')
-      throw new Error('Storage not configured. Please add SUPABASE_SERVICE_ROLE_KEY to .env')
+      throw new Error('No Supabase key configured')
     }
 
-    // Check if it's still a placeholder
-    if (supabaseKey.includes('your-') || supabaseKey.length < 100) {
-      console.error('SUPABASE_SERVICE_ROLE_KEY appears to be a placeholder or invalid')
-      console.error('Key length:', supabaseKey.length, '(should be ~200+ characters)')
-      throw new Error('Invalid service role key. Please update SUPABASE_SERVICE_ROLE_KEY in .env')
-    }
+    // Check if using service role or anon key
+    const isServiceRole = process.env.SUPABASE_SERVICE_ROLE_KEY &&
+                          !process.env.SUPABASE_SERVICE_ROLE_KEY.includes('your-') &&
+                          process.env.SUPABASE_SERVICE_ROLE_KEY.length > 100
 
-    console.log('Storage client initialized with service role key (length:', supabaseKey.length, ')')
+    console.log('Storage client initialized with', isServiceRole ? 'service role key' : 'anon key')
     storageClient = createClient(supabaseUrl, supabaseKey)
   }
   return storageClient
