@@ -42,6 +42,8 @@ model User {
   careHome      CareHome?
   sentMessages  Message[]     @relation("SentMessages")
   receivedMessages Message[]  @relation("ReceivedMessages")
+  conversationsAsParticipant1 Conversation[] @relation("ConversationParticipant1")
+  conversationsAsParticipant2 Conversation[] @relation("ConversationParticipant2")
   notifications Notification[]
 
   @@map("users")
@@ -403,19 +405,48 @@ model Review {
 // MESSAGING
 // ============================================
 
+model Conversation {
+  id            String    @id @default(cuid())
+
+  // Participants
+  participant1Id String
+  participant1   User      @relation("ConversationParticipant1", fields: [participant1Id], references: [id])
+  participant2Id String
+  participant2   User      @relation("ConversationParticipant2", fields: [participant2Id], references: [id])
+
+  // Optional context (e.g., related to a specific booking)
+  bookingId     String?
+
+  // Metadata
+  lastMessageAt DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+
+  // Relations
+  messages      Message[]
+
+  @@unique([participant1Id, participant2Id])
+  @@index([participant1Id])
+  @@index([participant2Id])
+  @@map("conversations")
+}
+
 model Message {
-  id          String    @id @default(cuid())
-  senderId    String
-  sender      User      @relation("SentMessages", fields: [senderId], references: [id])
-  receiverId  String
-  receiver    User      @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  id              String        @id @default(cuid())
+  conversationId  String
+  conversation    Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 
-  content     String
-  read        Boolean   @default(false)
-  readAt      DateTime?
+  senderId        String
+  sender          User          @relation("SentMessages", fields: [senderId], references: [id])
+  receiverId      String
+  receiver        User          @relation("ReceivedMessages", fields: [receiverId], references: [id])
 
-  createdAt   DateTime  @default(now())
+  content         String
+  read            Boolean       @default(false)
+  readAt          DateTime?
 
+  createdAt       DateTime      @default(now())
+
+  @@index([conversationId, createdAt])
   @@index([senderId, receiverId])
   @@index([receiverId, read])
   @@map("messages")

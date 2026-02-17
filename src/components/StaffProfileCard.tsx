@@ -1,15 +1,18 @@
 'use client'
 
-import { User, Star, Shield, CheckCircle, Award, Briefcase, Clock } from 'lucide-react'
+import { User, Star, Shield, CheckCircle, Award, Briefcase, Clock, MessageCircle } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
 import type { CareStaff, Qualification, VerificationStatus } from '@/generated/prisma'
 
 interface StaffProfileCardProps {
   staff: CareStaff & {
     qualifications?: Qualification[]
-    user?: { email: string }
+    user?: { email: string; id: string }
   }
   showContactInfo?: boolean
   compact?: boolean
+  bookingId?: string
 }
 
 const staffTypeLabels: Record<string, string> = {
@@ -21,21 +24,37 @@ const staffTypeLabels: Record<string, string> = {
   OTHER: 'Other',
 }
 
-export function StaffProfileCard({ staff, showContactInfo = false, compact = false }: StaffProfileCardProps) {
+// Helper to format name with surname initial for privacy
+function formatPrivateName(firstName: string, lastName: string): string {
+  return `${firstName} ${lastName.charAt(0).toUpperCase()}.`
+}
+
+export function StaffProfileCard({ staff, showContactInfo = false, compact = false, bookingId }: StaffProfileCardProps) {
   const isVerified = staff.verificationStatus === 'VERIFIED'
   const hasDbsVerified = isVerified && staff.dbsCertificateNumber && staff.dbsIssueDate
   const hasRtwVerified = isVerified && staff.rightToWorkConfirmed
+  const displayName = formatPrivateName(staff.firstName, staff.lastName)
 
   if (compact) {
     return (
       <div className="flex items-start gap-4">
-        <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-cyan-100 rounded-full flex items-center justify-center flex-shrink-0">
-          <User className="w-6 h-6 text-teal-600" />
+        <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-cyan-100 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+          {staff.profilePhoto ? (
+            <Image
+              src={staff.profilePhoto}
+              alt={displayName}
+              width={48}
+              height={48}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <User className="w-6 h-6 text-teal-600" />
+          )}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <p className="font-semibold text-gray-900">
-              {staff.firstName} {staff.lastName}
+              {displayName}
             </p>
             {isVerified && (
               <CheckCircle className="w-4 h-4 text-green-500" />
@@ -81,13 +100,23 @@ export function StaffProfileCard({ staff, showContactInfo = false, compact = fal
       {/* Header */}
       <div className="p-6 bg-gradient-to-br from-teal-50 to-cyan-50 border-b border-gray-100">
         <div className="flex items-start gap-4">
-          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm">
-            <User className="w-8 h-8 text-teal-600" />
+          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm overflow-hidden">
+            {staff.profilePhoto ? (
+              <Image
+                src={staff.profilePhoto}
+                alt={displayName}
+                width={64}
+                height={64}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <User className="w-8 h-8 text-teal-600" />
+            )}
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <h3 className="text-xl font-bold text-gray-900">
-                {staff.firstName} {staff.lastName}
+                {displayName}
               </h3>
               {isVerified && (
                 <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium text-green-700 bg-green-100 rounded-full">
@@ -100,11 +129,15 @@ export function StaffProfileCard({ staff, showContactInfo = false, compact = fal
               {staffTypeLabels[staff.staffType] || staff.staffType.replace(/_/g, ' ')}
             </p>
 
-            {showContactInfo && staff.user?.email && (
-              <p className="text-sm text-gray-500 mt-1">{staff.user.email}</p>
-            )}
-            {showContactInfo && staff.phone && (
-              <p className="text-sm text-gray-500">{staff.phone}</p>
+            {/* Message button instead of contact info */}
+            {showContactInfo && staff.user?.id && (
+              <Link
+                href={`/dashboard/messages?userId=${staff.user.id}${bookingId ? `&bookingId=${bookingId}` : ''}`}
+                className="inline-flex items-center mt-2 px-3 py-1.5 bg-teal-600 text-white text-sm font-medium rounded-lg hover:bg-teal-700 transition-colors"
+              >
+                <MessageCircle className="w-4 h-4 mr-1.5" />
+                Send Message
+              </Link>
             )}
           </div>
         </div>

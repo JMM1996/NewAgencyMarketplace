@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Menu, X, LogOut, LayoutDashboard, Clover } from 'lucide-react'
+import { Menu, X, LogOut, LayoutDashboard, Clover, MessageCircle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 interface AppUser {
@@ -100,6 +100,13 @@ export function Navbar() {
             ) : user ? (
               <div className="flex items-center space-x-4">
                 <Link
+                  href="/dashboard/messages"
+                  className="flex items-center space-x-2 text-gray-600 hover:text-teal-600 transition-colors"
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  <span>Messages</span>
+                </Link>
+                <Link
                   href={getDashboardLink()}
                   className="flex items-center space-x-2 text-gray-600 hover:text-teal-600 transition-colors"
                 >
@@ -177,6 +184,13 @@ export function Navbar() {
             </Link>
             {user ? (
               <>
+                <Link
+                  href="/dashboard/messages"
+                  className="block text-gray-600 hover:text-teal-600"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Messages
+                </Link>
                 <Link
                   href={getDashboardLink()}
                   className="block text-gray-600 hover:text-teal-600"

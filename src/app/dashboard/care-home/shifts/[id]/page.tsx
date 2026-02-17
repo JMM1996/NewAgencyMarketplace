@@ -48,7 +48,7 @@ export default async function CareHomeShiftDetailPage({
           careStaff: {
             include: {
               user: {
-                select: { email: true },
+                select: { id: true, email: true },
               },
               qualifications: {
                 orderBy: { createdAt: 'desc' },
@@ -143,6 +143,7 @@ export default async function CareHomeShiftDetailPage({
           <StaffProfileCard
             staff={confirmedBooking.careStaff}
             showContactInfo={true}
+            bookingId={confirmedBooking.id}
           />
         </div>
       )}
@@ -200,7 +201,7 @@ export default async function CareHomeShiftDetailPage({
                         <BookingActions
                           bookingId={booking.id}
                           shiftId={shift.id}
-                          staffName={`${booking.careStaff.firstName} ${booking.careStaff.lastName}`}
+                          staffName={`${booking.careStaff.firstName} ${booking.careStaff.lastName.charAt(0)}.`}
                         />
                       </div>
                     </div>
@@ -229,7 +230,7 @@ export default async function CareHomeShiftDetailPage({
                   </div>
                   <div>
                     <p className="font-medium text-gray-700">
-                      {booking.careStaff.firstName} {booking.careStaff.lastName}
+                      {booking.careStaff.firstName} {booking.careStaff.lastName.charAt(0)}.
                     </p>
                     <p className="text-sm text-gray-500">
                       {booking.careStaff.staffType.replace(/_/g, ' ')}
