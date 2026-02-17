@@ -67,7 +67,7 @@ export function ApplyButton({
           Sign In to Apply
         </Link>
         <p className="text-sm text-gray-500 text-center mt-4">
-          New to CareConnect?{' '}
+          New to Clovia?{' '}
           <Link href="/register?type=staff" className="text-teal-600 hover:underline">
             Create an account
           </Link>

@@ -1,4 +1,4 @@
-// CareConnect UK - Care Marketplace Database Schema
+// Clovia - Care Marketplace Database Schema
 
 generator client {
   provider = "prisma-client-js"

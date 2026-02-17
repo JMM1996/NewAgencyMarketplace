@@ -278,7 +278,7 @@ export function VerificationSection({ careStaff }: VerificationSectionProps) {
                   href="/dbs-application"
                   className="inline-flex items-center text-sm font-medium text-teal-600 hover:text-teal-700"
                 >
-                  How can CareConnect help with your DBS?
+                  How can Clovia help with your DBS?
                   <ExternalLink className="w-4 h-4 ml-1" />
                 </Link>
               </div>
@@ -392,7 +392,7 @@ export function VerificationSection({ careStaff }: VerificationSectionProps) {
           <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
             <p className="text-sm text-blue-800 mb-2">
               <strong>Insurance Requirement:</strong> Self-employed care workers must hold valid
-              Public Liability Insurance to work through CareConnect.
+              Public Liability Insurance to work through Clovia.
             </p>
             <p className="text-sm text-blue-700 mb-3">
               You can obtain insurance from any provider. As a suggestion, many carers use:

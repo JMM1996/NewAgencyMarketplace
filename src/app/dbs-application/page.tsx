@@ -19,16 +19,16 @@ export default function DbsApplicationPage() {
             <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center">
               <Shield className="w-6 h-6 text-teal-600" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">DBS Checks on CareConnect</h1>
+            <h1 className="text-2xl font-bold text-gray-900">DBS Checks on Clovia</h1>
           </div>
 
           <div className="prose prose-gray max-w-none">
             <p className="text-gray-600 mb-4">
-              CareConnect does not issue DBS checks directly.
+              Clovia does not issue DBS checks directly.
             </p>
             <p className="text-gray-600">
               All care workers using the platform must hold an appropriate Enhanced DBS check for
-              regulated activity. DBS checks facilitated through CareConnect are requested by
+              regulated activity. DBS checks facilitated through Clovia are requested by
               participating care providers in accordance with DBS eligibility rules.
             </p>
           </div>
@@ -76,10 +76,10 @@ export default function DbsApplicationPage() {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  2. Complete a DBS check via CareConnect
+                  2. Complete a DBS check via Clovia
                 </h3>
                 <p className="text-gray-600 mb-3">
-                  If you do not currently hold a valid DBS certificate, CareConnect can facilitate a
+                  If you do not currently hold a valid DBS certificate, Clovia can facilitate a
                   DBS application on behalf of participating care providers who are legally entitled
                   to request checks for regulated care roles.
                 </p>
@@ -109,13 +109,13 @@ export default function DbsApplicationPage() {
             <li className="flex items-start gap-3">
               <div className="w-2 h-2 bg-teal-600 rounded-full mt-2 flex-shrink-0"></div>
               <p className="text-gray-600">
-                CareConnect acts solely as a facilitator of the DBS process.
+                Clovia acts solely as a facilitator of the DBS process.
               </p>
             </li>
             <li className="flex items-start gap-3">
               <div className="w-2 h-2 bg-teal-600 rounded-full mt-2 flex-shrink-0"></div>
               <p className="text-gray-600">
-                CareConnect does not employ care workers and does not make recruitment decisions.
+                Clovia does not employ care workers and does not make recruitment decisions.
               </p>
             </li>
             <li className="flex items-start gap-3">
@@ -163,11 +163,11 @@ export default function DbsApplicationPage() {
             If you have questions about DBS eligibility or the onboarding process, please contact support.
           </p>
           <a
-            href="mailto:support@careconnect.uk"
+            href="mailto:support@clovia.uk"
             className="inline-flex items-center text-teal-600 font-medium hover:text-teal-700"
           >
             <Mail className="w-4 h-4 mr-2" />
-            support@careconnect.uk
+            support@clovia.uk
           </a>
         </div>
       </div>

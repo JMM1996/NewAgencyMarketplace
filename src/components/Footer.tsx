@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Clover } from 'lucide-react'
 
 export function Footer() {
   return (
@@ -9,9 +10,9 @@ export function Footer() {
           <div className="col-span-1 md:col-span-1">
             <div className="flex items-center space-x-2 mb-4">
               <div className="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">C</span>
+                <Clover className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-white">CareConnect</span>
+              <span className="text-xl font-bold text-white">Clovia</span>
             </div>
             <p className="text-sm text-gray-400">
               Connecting care homes with qualified, self-employed care professionals across the UK.
@@ -51,7 +52,7 @@ export function Footer() {
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/for-care-homes" className="hover:text-teal-400 transition-colors">
-                  Why CareConnect
+                  Why Clovia
                 </Link>
               </li>
               <li>
@@ -102,7 +103,7 @@ export function Footer() {
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-sm text-gray-400">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p>&copy; {new Date().getFullYear()} CareConnect UK. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} Clovia. All rights reserved.</p>
             <div className="flex items-center space-x-4 mt-4 md:mt-0">
               <span>Registered in England & Wales</span>
             </div>

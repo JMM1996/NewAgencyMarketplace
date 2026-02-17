@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Menu, X, LogOut, LayoutDashboard } from 'lucide-react'
+import { Menu, X, LogOut, LayoutDashboard, Clover } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 interface AppUser {
@@ -71,9 +71,9 @@ export function Navbar() {
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">C</span>
+                <Clover className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900">CareConnect</span>
+              <span className="text-xl font-bold text-gray-900">Clovia</span>
             </Link>
           </div>
 

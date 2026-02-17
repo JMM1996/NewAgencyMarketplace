@@ -2,7 +2,7 @@
 
 ## Overview
 
-CareConnect uses Supabase Storage for storing sensitive documents:
+Clovia uses Supabase Storage for storing sensitive documents:
 - DBS Certificates
 - Right to Work documents
 - Qualification certificates

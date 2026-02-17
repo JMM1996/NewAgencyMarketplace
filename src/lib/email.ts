@@ -13,7 +13,7 @@ function getResendClient(): Resend | null {
   return resendClient
 }
 
-const FROM_EMAIL = process.env.FROM_EMAIL || 'CareConnect <noreply@careconnect.uk>'
+const FROM_EMAIL = process.env.FROM_EMAIL || 'Clovia <noreply@clovia.uk>'
 
 interface BookingConfirmedEmailData {
   to: string
@@ -113,7 +113,7 @@ export async function sendBookingConfirmedEmail(data: BookingConfirmedEmailData)
 
             <p style="font-size: 14px; color: #6b7280; margin-top: 30px;">
               Best regards,<br>
-              The CareConnect Team
+              The Clovia Team
             </p>
           </div>
         </body>
@@ -174,7 +174,7 @@ export async function sendBookingRejectedEmail(data: BookingRejectedEmailData) {
 
             <p style="font-size: 14px; color: #6b7280; margin-top: 30px;">
               Best regards,<br>
-              The CareConnect Team
+              The Clovia Team
             </p>
           </div>
         </body>
@@ -250,7 +250,7 @@ export async function sendBookingRequestEmail(data: BookingRequestEmailData) {
 
             <p style="font-size: 14px; color: #6b7280; margin-top: 30px;">
               Best regards,<br>
-              The CareConnect Team
+              The Clovia Team
             </p>
           </div>
         </body>

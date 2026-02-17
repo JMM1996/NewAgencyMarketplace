@@ -1,4 +1,4 @@
-# CareConnect UK - Care Staff Marketplace
+# Clovia - Care Staff Marketplace
 
 A platform connecting care homes with self-employed care staff for short-term cover.
 
@@ -105,7 +105,7 @@ prisma/
 ## Environment Variables
 
 ```env
-DATABASE_URL="postgresql://user:password@localhost:5432/careconnect"
+DATABASE_URL="postgresql://user:password@localhost:5432/clovia"
 NEXTAUTH_URL="http://localhost:3000"
 NEXTAUTH_SECRET="your-secret-key"
 ```

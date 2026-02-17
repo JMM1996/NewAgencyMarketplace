@@ -5,7 +5,7 @@ import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 
 export const metadata: Metadata = {
-  title: 'CareConnect UK | Care Staff Marketplace',
+  title: 'Clovia | Care Staff Marketplace',
   description:
     'Connect with qualified, self-employed care professionals or find flexible shifts at care homes across the UK.',
   keywords: [

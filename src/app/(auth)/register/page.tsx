@@ -204,7 +204,7 @@ function RegisterForm() {
     <div className="max-w-md w-full">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Create Your Account</h1>
-        <p className="text-gray-600 mt-2">Join CareConnect today</p>
+        <p className="text-gray-600 mt-2">Join Clovia today</p>
       </div>
 
       <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
