@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { BookingActions } from './BookingActions'
+import { ShiftStatusActions } from './ShiftStatusActions'
 import { StaffProfileCard } from '@/components/StaffProfileCard'
 
 export default async function CareHomeShiftDetailPage({
@@ -132,9 +133,12 @@ export default async function CareHomeShiftDetailPage({
       {/* Confirmed Booking */}
       {confirmedBooking && (
         <div className="bg-green-50 border border-green-200 rounded-xl p-6 mb-6">
-          <div className="flex items-center gap-2 mb-4">
-            <CheckCircle className="w-5 h-5 text-green-600" />
-            <h2 className="text-lg font-semibold text-green-800">Shift Filled</h2>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-green-600" />
+              <h2 className="text-lg font-semibold text-green-800">Shift Filled</h2>
+            </div>
+            <ShiftStatusActions shiftId={shift.id} currentStatus={shift.status} />
           </div>
           <StaffProfileCard
             staff={confirmedBooking.careStaff}
