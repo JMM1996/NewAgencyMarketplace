@@ -10,6 +10,88 @@ const sendMessageSchema = z.object({
   bookingId: z.string().optional(),
 })
 
+// Helper to ensure conversations table exists
+async function ensureConversationsTable() {
+  try {
+    await prisma.$executeRawUnsafe(`
+      CREATE TABLE IF NOT EXISTS "conversations" (
+        "id" TEXT NOT NULL,
+        "participant1Id" TEXT NOT NULL,
+        "participant2Id" TEXT NOT NULL,
+        "bookingId" TEXT,
+        "lastMessageAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT "conversations_pkey" PRIMARY KEY ("id")
+      );
+    `)
+
+    await prisma.$executeRawUnsafe(`
+      DO $$ BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM pg_constraint WHERE conname = 'conversations_participant1Id_participant2Id_key'
+        ) THEN
+          ALTER TABLE "conversations" ADD CONSTRAINT "conversations_participant1Id_participant2Id_key" UNIQUE ("participant1Id", "participant2Id");
+        END IF;
+      END $$;
+    `)
+
+    await prisma.$executeRawUnsafe(`
+      DO $$ BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM pg_constraint WHERE conname = 'conversations_participant1Id_fkey'
+        ) THEN
+          ALTER TABLE "conversations" ADD CONSTRAINT "conversations_participant1Id_fkey" FOREIGN KEY ("participant1Id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+        END IF;
+      END $$;
+    `)
+
+    await prisma.$executeRawUnsafe(`
+      DO $$ BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM pg_constraint WHERE conname = 'conversations_participant2Id_fkey'
+        ) THEN
+          ALTER TABLE "conversations" ADD CONSTRAINT "conversations_participant2Id_fkey" FOREIGN KEY ("participant2Id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+        END IF;
+      END $$;
+    `)
+
+    await prisma.$executeRawUnsafe(`
+      CREATE INDEX IF NOT EXISTS "conversations_participant1Id_idx" ON "conversations"("participant1Id");
+    `)
+
+    await prisma.$executeRawUnsafe(`
+      CREATE INDEX IF NOT EXISTS "conversations_participant2Id_idx" ON "conversations"("participant2Id");
+    `)
+
+    // Add conversationId to messages if not exists
+    await prisma.$executeRawUnsafe(`
+      DO $$ BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'messages' AND column_name = 'conversationId'
+        ) THEN
+          ALTER TABLE "messages" ADD COLUMN "conversationId" TEXT;
+          ALTER TABLE "messages" ADD CONSTRAINT "messages_conversationId_fkey" FOREIGN KEY ("conversationId") REFERENCES "conversations"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+          CREATE INDEX "messages_conversationId_createdAt_idx" ON "messages"("conversationId", "createdAt");
+        END IF;
+      END $$;
+    `)
+  } catch (error) {
+    console.error('Error ensuring conversations table:', error)
+    throw error
+  }
+}
+
+// Track if migration has been run this session
+let migrationRun = false
+
+async function ensureMigration() {
+  if (!migrationRun) {
+    await ensureConversationsTable()
+    migrationRun = true
+  }
+}
+
 // GET - List all conversations for the current user
 export async function GET() {
   try {
@@ -18,6 +100,8 @@ export async function GET() {
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    await ensureMigration()
 
     // Get all conversations where user is a participant
     const conversations = await prisma.conversation.findMany({
@@ -120,6 +204,8 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    await ensureMigration()
 
     const body = await request.json()
     const validated = sendMessageSchema.parse(body)
