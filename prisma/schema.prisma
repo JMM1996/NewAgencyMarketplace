@@ -295,9 +295,13 @@ model Shift {
   hourlyRate      Decimal     @db.Decimal(10, 2)
   totalPay        Decimal?    @db.Decimal(10, 2)
 
-  // Requirements
-  uniformProvided Boolean     @default(false)
-  parkingAvailable Boolean    @default(true)
+  // Requirements & Amenities
+  uniformProvided     Boolean     @default(false)
+  parkingAvailable    Boolean     @default(true)
+  paidBreak           Boolean     @default(false)
+  mealsProvided       Boolean     @default(false)
+  accommodationProvided Boolean   @default(false) // For sleep-in shifts
+  accessibleByTransport Boolean   @default(false) // Public transport accessible
   specialRequirements String?
 
   // Status

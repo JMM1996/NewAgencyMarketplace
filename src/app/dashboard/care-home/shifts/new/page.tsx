@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
@@ -12,31 +12,79 @@ import {
   AlertCircle,
   Loader2,
   CheckCircle,
+  Info,
+  Car,
+  UtensilsCrossed,
+  Shirt,
+  Bus,
+  Home,
+  Coffee,
 } from 'lucide-react'
 
 const staffTypes = [
-  { value: 'REGISTERED_NURSE', label: 'Registered Nurse' },
-  { value: 'HEALTHCARE_ASSISTANT', label: 'Healthcare Assistant' },
-  { value: 'SUPPORT_WORKER', label: 'Support Worker' },
-  { value: 'SENIOR_CARER', label: 'Senior Carer' },
-  { value: 'CARE_ASSISTANT', label: 'Care Assistant' },
-  { value: 'OTHER', label: 'Other' },
+  { value: 'CARE_ASSISTANT', label: 'Care Assistant', minRate: 17, maxRate: 22, typical: 19.5 },
+  { value: 'HEALTHCARE_ASSISTANT', label: 'Healthcare Assistant', minRate: 17, maxRate: 22, typical: 19.5 },
+  { value: 'SUPPORT_WORKER', label: 'Support Worker', minRate: 16, maxRate: 20, typical: 18 },
+  { value: 'SENIOR_CARER', label: 'Senior Carer', minRate: 19, maxRate: 25, typical: 21 },
+  { value: 'REGISTERED_NURSE', label: 'Registered Nurse', minRate: 25, maxRate: 35, typical: 28 },
+  { value: 'OTHER', label: 'Other', minRate: 15, maxRate: 30, typical: 20 },
 ]
 
 const shiftTypes = [
-  { value: 'DAY', label: 'Day Shift' },
-  { value: 'NIGHT', label: 'Night Shift' },
-  { value: 'LONG_DAY', label: 'Long Day' },
-  { value: 'TWILIGHT', label: 'Twilight' },
-  { value: 'SLEEP_IN', label: 'Sleep-in' },
-  { value: 'WAKING_NIGHT', label: 'Waking Night' },
+  { value: 'DAY', label: 'Day Shift', defaultStart: '07:00', defaultEnd: '19:00' },
+  { value: 'NIGHT', label: 'Night Shift', defaultStart: '19:00', defaultEnd: '07:00' },
+  { value: 'LONG_DAY', label: 'Long Day', defaultStart: '07:00', defaultEnd: '21:00' },
+  { value: 'TWILIGHT', label: 'Twilight', defaultStart: '16:00', defaultEnd: '22:00' },
+  { value: 'SLEEP_IN', label: 'Sleep-in', defaultStart: '22:00', defaultEnd: '07:00' },
+  { value: 'WAKING_NIGHT', label: 'Waking Night', defaultStart: '20:00', defaultEnd: '08:00' },
 ]
+
+const daysOfWeek = [
+  { value: 'monday', label: 'Mon' },
+  { value: 'tuesday', label: 'Tue' },
+  { value: 'wednesday', label: 'Wed' },
+  { value: 'thursday', label: 'Thu' },
+  { value: 'friday', label: 'Fri' },
+  { value: 'saturday', label: 'Sat' },
+  { value: 'sunday', label: 'Sun' },
+]
+
+function getNextDatesForDays(selectedDays: string[], weeksAhead: number = 2): Date[] {
+  const dates: Date[] = []
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  const dayMap: Record<string, number> = {
+    sunday: 0, monday: 1, tuesday: 2, wednesday: 3,
+    thursday: 4, friday: 5, saturday: 6,
+  }
+
+  for (let week = 0; week < weeksAhead; week++) {
+    for (const day of selectedDays) {
+      const targetDay = dayMap[day]
+      const date = new Date(today)
+      date.setDate(today.getDate() + ((targetDay - today.getDay() + 7) % 7) + (week * 7))
+
+      // Only include future dates
+      if (date > today) {
+        dates.push(date)
+      }
+    }
+  }
+
+  return dates.sort((a, b) => a.getTime() - b.getTime())
+}
 
 export default function NewShiftPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [createdCount, setCreatedCount] = useState(0)
+
+  const [bookingMode, setBookingMode] = useState<'single' | 'multi'>('single')
+  const [selectedDays, setSelectedDays] = useState<string[]>([])
+  const [weeksAhead, setWeeksAhead] = useState(2)
 
   const [formData, setFormData] = useState({
     title: '',
@@ -50,8 +98,41 @@ export default function NewShiftPage() {
     hourlyRate: '',
     uniformProvided: false,
     parkingAvailable: true,
+    paidBreak: false,
+    mealsProvided: false,
+    accommodationProvided: false,
+    accessibleByTransport: false,
     specialRequirements: '',
   })
+
+  const selectedStaffType = useMemo(() => {
+    return staffTypes.find(t => t.value === formData.requiredRole) || staffTypes[0]
+  }, [formData.requiredRole])
+
+  const scheduledDates = useMemo(() => {
+    if (bookingMode === 'single') return []
+    return getNextDatesForDays(selectedDays, weeksAhead)
+  }, [bookingMode, selectedDays, weeksAhead])
+
+  const handleShiftTypeChange = (shiftType: string) => {
+    const type = shiftTypes.find(t => t.value === shiftType)
+    if (type) {
+      setFormData({
+        ...formData,
+        shiftType,
+        startTime: type.defaultStart,
+        endTime: type.defaultEnd,
+      })
+    }
+  }
+
+  const toggleDay = (day: string) => {
+    setSelectedDays(prev =>
+      prev.includes(day)
+        ? prev.filter(d => d !== day)
+        : [...prev, day]
+    )
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -59,12 +140,21 @@ export default function NewShiftPage() {
     setError(null)
 
     try {
+      const dates = bookingMode === 'single'
+        ? [formData.date]
+        : scheduledDates.map(d => d.toISOString().split('T')[0])
+
+      if (dates.length === 0) {
+        throw new Error('Please select at least one date')
+      }
+
       const res = await fetch('/api/shifts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
           hourlyRate: parseFloat(formData.hourlyRate),
+          dates, // Send array of dates
         }),
       })
 
@@ -74,6 +164,7 @@ export default function NewShiftPage() {
         throw new Error(data.error || 'Failed to create shift')
       }
 
+      setCreatedCount(data.count || 1)
       setSuccess(true)
       setTimeout(() => {
         router.push('/dashboard/care-home')
@@ -92,9 +183,13 @@ export default function NewShiftPage() {
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle className="w-8 h-8 text-green-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Shift Posted!</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            {createdCount > 1 ? `${createdCount} Shifts Posted!` : 'Shift Posted!'}
+          </h2>
           <p className="text-gray-600 mb-4">
-            Your shift has been published and care staff can now apply.
+            {createdCount > 1
+              ? 'Your shifts have been published and care staff can now apply.'
+              : 'Your shift has been published and care staff can now apply.'}
           </p>
           <Loader2 className="w-6 h-6 animate-spin mx-auto text-teal-600" />
         </div>
@@ -167,7 +262,7 @@ export default function NewShiftPage() {
               <select
                 required
                 value={formData.shiftType}
-                onChange={(e) => setFormData({ ...formData, shiftType: e.target.value })}
+                onChange={(e) => handleShiftTypeChange(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
               >
                 {shiftTypes.map((type) => (
@@ -179,11 +274,42 @@ export default function NewShiftPage() {
             </div>
           </div>
 
-          {/* Date & Time */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Booking Mode Toggle */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              <Calendar className="w-4 h-4 inline mr-1" />
+              Schedule Type
+            </label>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setBookingMode('single')}
+                className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors ${
+                  bookingMode === 'single'
+                    ? 'bg-teal-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Single Date
+              </button>
+              <button
+                type="button"
+                onClick={() => setBookingMode('multi')}
+                className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors ${
+                  bookingMode === 'multi'
+                    ? 'bg-teal-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Multiple Days
+              </button>
+            </div>
+          </div>
+
+          {/* Single Date or Multi-Day Selection */}
+          {bookingMode === 'single' ? (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Calendar className="w-4 h-4 inline mr-1" />
                 Date *
               </label>
               <input
@@ -195,7 +321,68 @@ export default function NewShiftPage() {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
               />
             </div>
+          ) : (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Select Days of the Week *
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {daysOfWeek.map((day) => (
+                    <button
+                      key={day.value}
+                      type="button"
+                      onClick={() => toggleDay(day.value)}
+                      className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                        selectedDays.includes(day.value)
+                          ? 'bg-teal-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {day.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Schedule for how many weeks?
+                </label>
+                <select
+                  value={weeksAhead}
+                  onChange={(e) => setWeeksAhead(parseInt(e.target.value))}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
+                >
+                  <option value={1}>1 week</option>
+                  <option value={2}>2 weeks</option>
+                  <option value={3}>3 weeks</option>
+                  <option value={4}>4 weeks</option>
+                </select>
+              </div>
+
+              {scheduledDates.length > 0 && (
+                <div className="bg-teal-50 border border-teal-200 rounded-lg p-4">
+                  <p className="text-sm font-medium text-teal-800 mb-2">
+                    {scheduledDates.length} shift{scheduledDates.length > 1 ? 's' : ''} will be created:
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {scheduledDates.map((date, idx) => (
+                      <span
+                        key={idx}
+                        className="inline-block px-2 py-1 bg-white text-teal-700 text-sm rounded border border-teal-200"
+                      >
+                        {date.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Start & End Time */}
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Clock className="w-4 h-4 inline mr-1" />
@@ -229,31 +416,49 @@ export default function NewShiftPage() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Banknote className="w-4 h-4 inline mr-1" />
-                Hourly Rate () *
+                Hourly Rate (£) *
               </label>
               <input
                 type="number"
                 required
                 min="1"
-                step="0.01"
+                step="0.50"
                 value={formData.hourlyRate}
                 onChange={(e) => setFormData({ ...formData, hourlyRate: e.target.value })}
-                placeholder="e.g., 15.00"
+                placeholder={`e.g., ${selectedStaffType.typical.toFixed(2)}`}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
               />
+              {/* Suggested Rate */}
+              <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-start gap-2">
+                  <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <div className="text-sm">
+                    <p className="text-blue-800 font-medium">
+                      Suggested: £{selectedStaffType.minRate} - £{selectedStaffType.maxRate}/hr
+                    </p>
+                    <p className="text-blue-600">
+                      Typical rate for {selectedStaffType.label}: £{selectedStaffType.typical.toFixed(2)}/hr
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Break Duration (minutes)
               </label>
-              <input
-                type="number"
-                min="0"
+              <select
                 value={formData.breakDuration}
-                onChange={(e) => setFormData({ ...formData, breakDuration: parseInt(e.target.value) || 0 })}
+                onChange={(e) => setFormData({ ...formData, breakDuration: parseInt(e.target.value) })}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
-              />
+              >
+                <option value={0}>No break</option>
+                <option value={15}>15 minutes</option>
+                <option value={30}>30 minutes</option>
+                <option value={45}>45 minutes</option>
+                <option value={60}>60 minutes</option>
+              </select>
             </div>
           </div>
 
@@ -286,26 +491,103 @@ export default function NewShiftPage() {
           </div>
 
           {/* Amenities */}
-          <div className="flex flex-wrap gap-6">
-            <label className="flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={formData.uniformProvided}
-                onChange={(e) => setFormData({ ...formData, uniformProvided: e.target.checked })}
-                className="w-5 h-5 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
-              />
-              <span className="ml-2 text-gray-700">Uniform Provided</span>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Shift Amenities
             </label>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <label className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${
+                formData.uniformProvided ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'
+              }`}>
+                <input
+                  type="checkbox"
+                  checked={formData.uniformProvided}
+                  onChange={(e) => setFormData({ ...formData, uniformProvided: e.target.checked })}
+                  className="sr-only"
+                />
+                <Shirt className={`w-5 h-5 ${formData.uniformProvided ? 'text-teal-600' : 'text-gray-400'}`} />
+                <span className={`text-sm font-medium ${formData.uniformProvided ? 'text-teal-700' : 'text-gray-700'}`}>
+                  Uniform Provided
+                </span>
+              </label>
 
-            <label className="flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={formData.parkingAvailable}
-                onChange={(e) => setFormData({ ...formData, parkingAvailable: e.target.checked })}
-                className="w-5 h-5 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
-              />
-              <span className="ml-2 text-gray-700">Parking Available</span>
-            </label>
+              <label className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${
+                formData.parkingAvailable ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'
+              }`}>
+                <input
+                  type="checkbox"
+                  checked={formData.parkingAvailable}
+                  onChange={(e) => setFormData({ ...formData, parkingAvailable: e.target.checked })}
+                  className="sr-only"
+                />
+                <Car className={`w-5 h-5 ${formData.parkingAvailable ? 'text-teal-600' : 'text-gray-400'}`} />
+                <span className={`text-sm font-medium ${formData.parkingAvailable ? 'text-teal-700' : 'text-gray-700'}`}>
+                  Free Parking
+                </span>
+              </label>
+
+              <label className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${
+                formData.paidBreak ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'
+              }`}>
+                <input
+                  type="checkbox"
+                  checked={formData.paidBreak}
+                  onChange={(e) => setFormData({ ...formData, paidBreak: e.target.checked })}
+                  className="sr-only"
+                />
+                <Coffee className={`w-5 h-5 ${formData.paidBreak ? 'text-teal-600' : 'text-gray-400'}`} />
+                <span className={`text-sm font-medium ${formData.paidBreak ? 'text-teal-700' : 'text-gray-700'}`}>
+                  Paid Break
+                </span>
+              </label>
+
+              <label className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${
+                formData.mealsProvided ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'
+              }`}>
+                <input
+                  type="checkbox"
+                  checked={formData.mealsProvided}
+                  onChange={(e) => setFormData({ ...formData, mealsProvided: e.target.checked })}
+                  className="sr-only"
+                />
+                <UtensilsCrossed className={`w-5 h-5 ${formData.mealsProvided ? 'text-teal-600' : 'text-gray-400'}`} />
+                <span className={`text-sm font-medium ${formData.mealsProvided ? 'text-teal-700' : 'text-gray-700'}`}>
+                  Meals Provided
+                </span>
+              </label>
+
+              <label className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${
+                formData.accessibleByTransport ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'
+              }`}>
+                <input
+                  type="checkbox"
+                  checked={formData.accessibleByTransport}
+                  onChange={(e) => setFormData({ ...formData, accessibleByTransport: e.target.checked })}
+                  className="sr-only"
+                />
+                <Bus className={`w-5 h-5 ${formData.accessibleByTransport ? 'text-teal-600' : 'text-gray-400'}`} />
+                <span className={`text-sm font-medium ${formData.accessibleByTransport ? 'text-teal-700' : 'text-gray-700'}`}>
+                  Public Transport
+                </span>
+              </label>
+
+              {(formData.shiftType === 'SLEEP_IN' || formData.shiftType === 'WAKING_NIGHT') && (
+                <label className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${
+                  formData.accommodationProvided ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'
+                }`}>
+                  <input
+                    type="checkbox"
+                    checked={formData.accommodationProvided}
+                    onChange={(e) => setFormData({ ...formData, accommodationProvided: e.target.checked })}
+                    className="sr-only"
+                  />
+                  <Home className={`w-5 h-5 ${formData.accommodationProvided ? 'text-teal-600' : 'text-gray-400'}`} />
+                  <span className={`text-sm font-medium ${formData.accommodationProvided ? 'text-teal-700' : 'text-gray-700'}`}>
+                    Accommodation
+                  </span>
+                </label>
+              )}
+            </div>
           </div>
 
           {/* Submit */}
@@ -318,7 +600,7 @@ export default function NewShiftPage() {
             </Link>
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || (bookingMode === 'multi' && selectedDays.length === 0)}
               className="flex-1 px-4 py-3 bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
               {isLoading ? (
@@ -326,6 +608,8 @@ export default function NewShiftPage() {
                   <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                   Posting...
                 </>
+              ) : bookingMode === 'multi' && scheduledDates.length > 1 ? (
+                `Post ${scheduledDates.length} Shifts`
               ) : (
                 'Post Shift'
               )}

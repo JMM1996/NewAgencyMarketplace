@@ -102,13 +102,18 @@ const createShiftSchema = z.object({
   description: z.string().optional(),
   requiredRole: z.nativeEnum(StaffType),
   shiftType: z.nativeEnum(ShiftType).default('DAY'),
-  date: z.string().refine((d) => !isNaN(Date.parse(d)), 'Invalid date'),
+  date: z.string().refine((d) => !isNaN(Date.parse(d)), 'Invalid date').optional(),
+  dates: z.array(z.string().refine((d) => !isNaN(Date.parse(d)), 'Invalid date')).optional(),
   startTime: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format (HH:MM)'),
   endTime: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format (HH:MM)'),
   breakDuration: z.number().min(0).default(30),
   hourlyRate: z.number().positive('Rate must be positive'),
   uniformProvided: z.boolean().default(false),
   parkingAvailable: z.boolean().default(true),
+  paidBreak: z.boolean().default(false),
+  mealsProvided: z.boolean().default(false),
+  accommodationProvided: z.boolean().default(false),
+  accessibleByTransport: z.boolean().default(false),
   specialRequirements: z.string().optional(),
 })
 
@@ -141,6 +146,16 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const validated = createShiftSchema.parse(body)
 
+    // Get dates array - support both single date and multiple dates
+    const dates = validated.dates || (validated.date ? [validated.date] : [])
+
+    if (dates.length === 0) {
+      return NextResponse.json(
+        { error: 'At least one date is required' },
+        { status: 400 }
+      )
+    }
+
     // Calculate total pay
     const [startHour, startMin] = validated.startTime.split(':').map(Number)
     const [endHour, endMin] = validated.endTime.split(':').map(Number)
@@ -149,40 +164,49 @@ export async function POST(request: NextRequest) {
     const workingMinutes = totalMinutes - validated.breakDuration
     const totalPay = (workingMinutes / 60) * validated.hourlyRate
 
-    const shift = await prisma.shift.create({
-      data: {
-        careHomeId: careHome.id,
-        title: validated.title,
-        description: validated.description,
-        requiredRole: validated.requiredRole,
-        shiftType: validated.shiftType,
-        date: new Date(validated.date),
-        startTime: validated.startTime,
-        endTime: validated.endTime,
-        breakDuration: validated.breakDuration,
-        hourlyRate: validated.hourlyRate,
-        totalPay,
-        uniformProvided: validated.uniformProvided,
-        parkingAvailable: validated.parkingAvailable,
-        specialRequirements: validated.specialRequirements,
-      },
-      include: {
-        careHome: {
-          select: {
-            name: true,
-            city: true,
+    // Create shifts for all dates
+    const shifts = await Promise.all(
+      dates.map(async (date) => {
+        return prisma.shift.create({
+          data: {
+            careHomeId: careHome.id,
+            title: validated.title,
+            description: validated.description,
+            requiredRole: validated.requiredRole,
+            shiftType: validated.shiftType,
+            date: new Date(date),
+            startTime: validated.startTime,
+            endTime: validated.endTime,
+            breakDuration: validated.breakDuration,
+            hourlyRate: validated.hourlyRate,
+            totalPay,
+            uniformProvided: validated.uniformProvided,
+            parkingAvailable: validated.parkingAvailable,
+            paidBreak: validated.paidBreak,
+            mealsProvided: validated.mealsProvided,
+            accommodationProvided: validated.accommodationProvided,
+            accessibleByTransport: validated.accessibleByTransport,
+            specialRequirements: validated.specialRequirements,
           },
-        },
-      },
-    })
+          include: {
+            careHome: {
+              select: {
+                name: true,
+                city: true,
+              },
+            },
+          },
+        })
+      })
+    )
 
     // Update care home stats
     await prisma.careHome.update({
       where: { id: careHome.id },
-      data: { totalShiftsPosted: { increment: 1 } },
+      data: { totalShiftsPosted: { increment: shifts.length } },
     })
 
-    return NextResponse.json(shift, { status: 201 })
+    return NextResponse.json({ shifts, count: shifts.length }, { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
