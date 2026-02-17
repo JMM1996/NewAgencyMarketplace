@@ -85,9 +85,11 @@ export default async function ShiftDetailPage({
   const [endHour, endMin] = shift.endTime.split(':').map(Number)
   let totalMinutes = (endHour * 60 + endMin) - (startHour * 60 + startMin)
   if (totalMinutes < 0) totalMinutes += 24 * 60
-  const workingMinutes = totalMinutes - shift.breakDuration
-  const hours = Math.floor(workingMinutes / 60)
-  const mins = workingMinutes % 60
+  // If paid break, carer gets paid for full shift
+  const paidMinutes = shift.paidBreak ? totalMinutes : totalMinutes - shift.breakDuration
+  const displayMinutes = totalMinutes - shift.breakDuration // For display purposes
+  const hours = Math.floor(displayMinutes / 60)
+  const mins = displayMinutes % 60
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -205,10 +207,22 @@ export default async function ShiftDetailPage({
                   <Shirt className="w-5 h-5" />
                   <span className="font-medium">Uniform {shift.uniformProvided ? 'Provided' : 'Required'}</span>
                 </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-50 text-blue-700">
-                  <Info className="w-5 h-5" />
-                  <span className="font-medium">{shift.breakDuration}min Break</span>
-                </div>
+                {shift.breakDuration > 0 && (
+                  <div className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                    shift.paidBreak ? 'bg-green-50 text-green-700' : 'bg-blue-50 text-blue-700'
+                  }`}>
+                    <Info className="w-5 h-5" />
+                    <span className="font-medium">
+                      {shift.breakDuration}min {shift.paidBreak ? 'Paid Break' : 'Break'}
+                    </span>
+                  </div>
+                )}
+                {shift.mealsProvided && (
+                  <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-50 text-green-700">
+                    <CheckCircle className="w-5 h-5" />
+                    <span className="font-medium">Meals Provided</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -219,7 +233,7 @@ export default async function ShiftDetailPage({
             <div className="bg-gradient-to-br from-teal-600 to-teal-700 rounded-xl p-6 text-white">
               <h3 className="text-sm font-medium text-teal-100 mb-1">Estimated Earnings</h3>
               {(() => {
-                const grossPay = shift.totalPay ? Number(shift.totalPay) : (workingMinutes / 60 * Number(shift.hourlyRate));
+                const grossPay = shift.totalPay ? Number(shift.totalPay) : (paidMinutes / 60 * Number(shift.hourlyRate));
                 const platformFee = grossPay * 0.15;
                 const netPay = grossPay - platformFee;
                 return (
@@ -233,9 +247,14 @@ export default async function ShiftDetailPage({
                         <span>£{shift.hourlyRate.toString()}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Working Hours</span>
-                        <span>{(workingMinutes / 60).toFixed(1)}hrs</span>
+                        <span>Paid Hours</span>
+                        <span>{(paidMinutes / 60).toFixed(1)}hrs</span>
                       </div>
+                      {shift.paidBreak && shift.breakDuration > 0 && (
+                        <div className="flex justify-between text-green-300">
+                          <span>✓ Includes {shift.breakDuration}min paid break</span>
+                        </div>
+                      )}
                       <div className="flex justify-between">
                         <span>Gross Pay</span>
                         <span>£{grossPay.toFixed(2)}</span>
