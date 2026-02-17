@@ -98,10 +98,8 @@ export async function GET(request: NextRequest) {
 
 // POST - Create a new shift (care homes only)
 const createShiftSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
   description: z.string().optional(),
   requiredRole: z.nativeEnum(StaffType),
-  shiftType: z.nativeEnum(ShiftType).default('DAY'),
   date: z.string().refine((d) => !isNaN(Date.parse(d)), 'Invalid date').optional(),
   dates: z.array(z.string().refine((d) => !isNaN(Date.parse(d)), 'Invalid date')).optional(),
   startTime: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format (HH:MM)'),
@@ -112,9 +110,7 @@ const createShiftSchema = z.object({
   parkingAvailable: z.boolean().default(true),
   paidBreak: z.boolean().default(false),
   mealsProvided: z.boolean().default(false),
-  accommodationProvided: z.boolean().default(false),
-  accessibleByTransport: z.boolean().default(false),
-  specialRequirements: z.string().optional(),
+  otherAmenities: z.string().optional(),
 })
 
 export async function POST(request: NextRequest) {
@@ -164,16 +160,21 @@ export async function POST(request: NextRequest) {
     const workingMinutes = totalMinutes - validated.breakDuration
     const totalPay = (workingMinutes / 60) * validated.hourlyRate
 
+    // Generate title from time and postcode (e.g., "0700 - 1900, HG2 7DZ")
+    const formattedStart = validated.startTime.replace(':', '')
+    const formattedEnd = validated.endTime.replace(':', '')
+    const title = `${formattedStart} - ${formattedEnd}, ${careHome.postcode}`
+
     // Create shifts for all dates
     const shifts = await Promise.all(
       dates.map(async (date) => {
         return prisma.shift.create({
           data: {
             careHomeId: careHome.id,
-            title: validated.title,
+            title,
             description: validated.description,
             requiredRole: validated.requiredRole,
-            shiftType: validated.shiftType,
+            shiftType: 'DAY', // Default shift type
             date: new Date(date),
             startTime: validated.startTime,
             endTime: validated.endTime,
@@ -184,9 +185,7 @@ export async function POST(request: NextRequest) {
             parkingAvailable: validated.parkingAvailable,
             paidBreak: validated.paidBreak,
             mealsProvided: validated.mealsProvided,
-            accommodationProvided: validated.accommodationProvided,
-            accessibleByTransport: validated.accessibleByTransport,
-            specialRequirements: validated.specialRequirements,
+            specialRequirements: validated.otherAmenities,
           },
           include: {
             careHome: {
