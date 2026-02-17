@@ -66,10 +66,16 @@ export function VerificationSection({ careStaff }: VerificationSectionProps) {
       : '',
     dbsOnUpdateService: careStaff.dbsOnUpdateService,
     rightToWorkConfirmed: careStaff.rightToWorkConfirmed,
+    insuranceProvider: careStaff.insuranceProvider || '',
+    insurancePolicyNumber: careStaff.insurancePolicyNumber || '',
+    insuranceExpiryDate: careStaff.insuranceExpiryDate
+      ? new Date(careStaff.insuranceExpiryDate).toISOString().split('T')[0]
+      : '',
   })
 
   const [dbsFile, setDbsFile] = useState<File | null>(null)
   const [rtwFile, setRtwFile] = useState<File | null>(null)
+  const [insuranceFile, setInsuranceFile] = useState<File | null>(null)
 
   const statusConfig = verificationStatusConfig[careStaff.verificationStatus]
   const StatusIcon = statusConfig.icon
@@ -82,7 +88,7 @@ export function VerificationSection({ careStaff }: VerificationSectionProps) {
     }))
   }
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'dbs' | 'rtw') => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'dbs' | 'rtw' | 'insurance') => {
     const file = e.target.files?.[0]
     if (file) {
       // Validate file size (max 5MB)
@@ -99,8 +105,10 @@ export function VerificationSection({ careStaff }: VerificationSectionProps) {
       setError(null)
       if (type === 'dbs') {
         setDbsFile(file)
-      } else {
+      } else if (type === 'rtw') {
         setRtwFile(file)
+      } else {
+        setInsuranceFile(file)
       }
     }
   }
@@ -118,12 +126,18 @@ export function VerificationSection({ careStaff }: VerificationSectionProps) {
       submitData.append('dbsIssueDate', formData.dbsIssueDate)
       submitData.append('dbsOnUpdateService', formData.dbsOnUpdateService.toString())
       submitData.append('rightToWorkConfirmed', formData.rightToWorkConfirmed.toString())
+      submitData.append('insuranceProvider', formData.insuranceProvider)
+      submitData.append('insurancePolicyNumber', formData.insurancePolicyNumber)
+      submitData.append('insuranceExpiryDate', formData.insuranceExpiryDate)
 
       if (dbsFile) {
         submitData.append('dbsCertificate', dbsFile)
       }
       if (rtwFile) {
         submitData.append('rightToWorkDocument', rtwFile)
+      }
+      if (insuranceFile) {
+        submitData.append('insuranceDocument', insuranceFile)
       }
 
       const response = await fetch('/api/staff/verification', {
@@ -139,6 +153,7 @@ export function VerificationSection({ careStaff }: VerificationSectionProps) {
       setSuccess(true)
       setDbsFile(null)
       setRtwFile(null)
+      setInsuranceFile(null)
       router.refresh()
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
@@ -353,6 +368,122 @@ export function VerificationSection({ careStaff }: VerificationSectionProps) {
                 {careStaff.rightToWorkDocumentUrl && !rtwFile && (
                   <a
                     href={careStaff.rightToWorkDocumentUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-sm text-teal-600 hover:text-teal-700"
+                  >
+                    <Eye className="w-4 h-4" />
+                    View Current
+                  </a>
+                )}
+              </div>
+              <p className="text-xs text-gray-500 mt-1">JPG, PNG or PDF, max 5MB</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Public Liability Insurance Section */}
+        <div className="p-6 border-b border-gray-100">
+          <h3 className="font-medium text-gray-900 mb-4 flex items-center gap-2">
+            <Shield className="w-5 h-5 text-teal-600" />
+            Public Liability Insurance
+          </h3>
+
+          <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-sm text-blue-800 mb-2">
+              <strong>Insurance Requirement:</strong> Self-employed care workers must hold valid
+              Public Liability Insurance to work through CareConnect.
+            </p>
+            <p className="text-sm text-blue-700 mb-3">
+              You can obtain insurance from any provider. As a suggestion, many carers use:
+            </p>
+            <a
+              href="https://secure.surewise.com/quote/carers/prequote/2020855351/6719e3cba6c70e202538e7150c015b66"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Get a quote from Surewise
+              <ExternalLink className="w-4 h-4" />
+            </a>
+            <p className="text-xs text-blue-600 mt-2">
+              This is a suggestion only - you are free to choose any insurance provider.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="insuranceProvider" className="block text-sm font-medium text-gray-700 mb-1">
+                Insurance Provider
+              </label>
+              <input
+                type="text"
+                id="insuranceProvider"
+                name="insuranceProvider"
+                value={formData.insuranceProvider}
+                onChange={handleChange}
+                placeholder="e.g., Surewise, Carer Support"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="insurancePolicyNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                Policy Number
+              </label>
+              <input
+                type="text"
+                id="insurancePolicyNumber"
+                name="insurancePolicyNumber"
+                value={formData.insurancePolicyNumber}
+                onChange={handleChange}
+                placeholder="e.g., PLI-12345678"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="insuranceExpiryDate" className="block text-sm font-medium text-gray-700 mb-1">
+                Policy Expiry Date
+              </label>
+              <input
+                type="date"
+                id="insuranceExpiryDate"
+                name="insuranceExpiryDate"
+                value={formData.insuranceExpiryDate}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              />
+              {formData.insuranceExpiryDate && new Date(formData.insuranceExpiryDate) < new Date() && (
+                <p className="text-sm text-red-600 mt-1 flex items-center gap-1">
+                  <AlertTriangle className="w-4 h-4" />
+                  Insurance has expired
+                </p>
+              )}
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Upload Proof of Insurance
+              </label>
+              <div className="flex items-center gap-4">
+                <label className="flex-1 relative cursor-pointer">
+                  <input
+                    type="file"
+                    accept=".jpg,.jpeg,.png,.pdf"
+                    onChange={(e) => handleFileChange(e, 'insurance')}
+                    className="sr-only"
+                  />
+                  <div className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-teal-400 transition-colors">
+                    <Upload className="w-5 h-5 text-gray-400" />
+                    <span className="text-sm text-gray-600">
+                      {insuranceFile ? insuranceFile.name : 'Choose file or drag and drop'}
+                    </span>
+                  </div>
+                </label>
+                {careStaff.insuranceDocumentUrl && !insuranceFile && (
+                  <a
+                    href={careStaff.insuranceDocumentUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 text-sm text-teal-600 hover:text-teal-700"

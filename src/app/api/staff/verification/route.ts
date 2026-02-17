@@ -29,11 +29,16 @@ export async function POST(request: NextRequest) {
     const dbsIssueDate = formData.get('dbsIssueDate') as string
     const dbsOnUpdateService = formData.get('dbsOnUpdateService') === 'true'
     const rightToWorkConfirmed = formData.get('rightToWorkConfirmed') === 'true'
+    const insuranceProvider = formData.get('insuranceProvider') as string
+    const insurancePolicyNumber = formData.get('insurancePolicyNumber') as string
+    const insuranceExpiryDate = formData.get('insuranceExpiryDate') as string
     const dbsCertificateFile = formData.get('dbsCertificate') as File | null
     const rightToWorkFile = formData.get('rightToWorkDocument') as File | null
+    const insuranceFile = formData.get('insuranceDocument') as File | null
 
     let dbsCertificateUrl = careStaff.dbsCertificateUrl
     let rightToWorkDocumentUrl = careStaff.rightToWorkDocumentUrl
+    let insuranceDocumentUrl = careStaff.insuranceDocumentUrl
 
     // Upload DBS certificate if provided
     if (dbsCertificateFile && dbsCertificateFile.size > 0) {
@@ -55,6 +60,17 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Failed to upload Right to Work document' }, { status: 500 })
       }
       rightToWorkDocumentUrl = url
+    }
+
+    // Upload Insurance document if provided
+    if (insuranceFile && insuranceFile.size > 0) {
+      const filePath = generateFilePath(user.id, 'insurance', insuranceFile.name)
+      const { url, error } = await uploadFile(STORAGE_BUCKETS.DOCUMENTS, filePath, insuranceFile)
+      if (error) {
+        console.error('Error uploading insurance document:', error)
+        return NextResponse.json({ error: 'Failed to upload insurance document' }, { status: 500 })
+      }
+      insuranceDocumentUrl = url
     }
 
     // Determine verification status
@@ -87,6 +103,10 @@ export async function POST(request: NextRequest) {
         dbsCertificateUrl,
         rightToWorkConfirmed,
         rightToWorkDocumentUrl,
+        insuranceProvider: insuranceProvider || null,
+        insurancePolicyNumber: insurancePolicyNumber || null,
+        insuranceExpiryDate: insuranceExpiryDate ? new Date(insuranceExpiryDate) : null,
+        insuranceDocumentUrl,
         verificationStatus,
         // Clear verification notes if resubmitting after rejection
         verificationNotes: verificationStatus === 'PENDING_REVIEW' && careStaff.verificationStatus === 'REJECTED'
@@ -126,6 +146,10 @@ export async function GET() {
         dbsCertificateUrl: true,
         rightToWorkConfirmed: true,
         rightToWorkDocumentUrl: true,
+        insuranceProvider: true,
+        insurancePolicyNumber: true,
+        insuranceExpiryDate: true,
+        insuranceDocumentUrl: true,
         verificationStatus: true,
         verificationNotes: true,
         verifiedAt: true,

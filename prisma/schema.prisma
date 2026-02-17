@@ -105,6 +105,12 @@ model CareStaff {
   rightToWorkConfirmed Boolean    @default(false)
   rightToWorkDocumentUrl String?  // Uploaded right to work document
 
+  // Public Liability Insurance
+  insuranceProvider     String?
+  insurancePolicyNumber String?
+  insuranceExpiryDate   DateTime?
+  insuranceDocumentUrl  String?   // Uploaded proof of insurance
+
   // Verification Status (for admin review)
   verificationStatus  VerificationStatus @default(INCOMPLETE)
   verificationNotes   String?     // Admin notes on verification

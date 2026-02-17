@@ -135,7 +135,7 @@ export async function deleteFile(
  */
 export function generateFilePath(
   userId: string,
-  documentType: 'dbs' | 'right-to-work' | 'qualification',
+  documentType: 'dbs' | 'right-to-work' | 'qualification' | 'insurance',
   originalFilename: string
 ): string {
   const timestamp = Date.now()
