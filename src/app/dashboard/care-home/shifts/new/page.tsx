@@ -16,8 +16,6 @@ import {
   Car,
   UtensilsCrossed,
   Shirt,
-  Bus,
-  Home,
   Coffee,
   ChevronLeft,
   ChevronRight,
@@ -25,21 +23,9 @@ import {
 } from 'lucide-react'
 
 const staffTypes = [
-  { value: 'CARE_ASSISTANT', label: 'Care Assistant', minRate: 17, maxRate: 22, typical: 19.5 },
-  { value: 'HEALTHCARE_ASSISTANT', label: 'Healthcare Assistant', minRate: 17, maxRate: 22, typical: 19.5 },
-  { value: 'SUPPORT_WORKER', label: 'Support Worker', minRate: 16, maxRate: 20, typical: 18 },
-  { value: 'SENIOR_CARER', label: 'Senior Carer', minRate: 19, maxRate: 25, typical: 21 },
-  { value: 'REGISTERED_NURSE', label: 'Registered Nurse', minRate: 25, maxRate: 35, typical: 28 },
-  { value: 'OTHER', label: 'Other', minRate: 15, maxRate: 30, typical: 20 },
-]
-
-const shiftTypes = [
-  { value: 'DAY', label: 'Day Shift', defaultStart: '07:00', defaultEnd: '19:00' },
-  { value: 'NIGHT', label: 'Night Shift', defaultStart: '19:00', defaultEnd: '07:00' },
-  { value: 'LONG_DAY', label: 'Long Day', defaultStart: '07:00', defaultEnd: '21:00' },
-  { value: 'TWILIGHT', label: 'Twilight', defaultStart: '16:00', defaultEnd: '22:00' },
-  { value: 'SLEEP_IN', label: 'Sleep-in', defaultStart: '22:00', defaultEnd: '07:00' },
-  { value: 'WAKING_NIGHT', label: 'Waking Night', defaultStart: '20:00', defaultEnd: '08:00' },
+  { value: 'CARE_ASSISTANT', label: 'Care Assistant', minRate: 14, maxRate: 18 },
+  { value: 'SENIOR_CARER', label: 'Senior Care Assistant', minRate: 16, maxRate: 22 },
+  { value: 'REGISTERED_NURSE', label: 'Registered Nurse', minRate: 25, maxRate: 35 },
 ]
 
 // Calendar Component
@@ -213,15 +199,11 @@ export default function NewShiftPage() {
   const [success, setSuccess] = useState(false)
   const [createdCount, setCreatedCount] = useState(0)
 
-  const [bookingMode, setBookingMode] = useState<'single' | 'multi'>('single')
   const [selectedDates, setSelectedDates] = useState<Date[]>([])
 
   const [formData, setFormData] = useState({
-    title: '',
     description: '',
     requiredRole: 'CARE_ASSISTANT',
-    shiftType: 'DAY',
-    date: '',
     startTime: '07:00',
     endTime: '19:00',
     breakDuration: 30,
@@ -230,26 +212,12 @@ export default function NewShiftPage() {
     parkingAvailable: true,
     paidBreak: false,
     mealsProvided: false,
-    accommodationProvided: false,
-    accessibleByTransport: false,
-    specialRequirements: '',
+    otherAmenities: '',
   })
 
   const selectedStaffType = useMemo(() => {
     return staffTypes.find(t => t.value === formData.requiredRole) || staffTypes[0]
   }, [formData.requiredRole])
-
-  const handleShiftTypeChange = (shiftType: string) => {
-    const type = shiftTypes.find(t => t.value === shiftType)
-    if (type) {
-      setFormData({
-        ...formData,
-        shiftType,
-        startTime: type.defaultStart,
-        endTime: type.defaultEnd,
-      })
-    }
-  }
 
   const toggleDate = (date: Date) => {
     setSelectedDates(prev => {
@@ -272,11 +240,9 @@ export default function NewShiftPage() {
     setError(null)
 
     try {
-      const dates = bookingMode === 'single'
-        ? [formData.date]
-        : selectedDates.map(d => d.toISOString().split('T')[0])
+      const dates = selectedDates.map(d => d.toISOString().split('T')[0])
 
-      if (dates.length === 0 || (bookingMode === 'single' && !formData.date)) {
+      if (dates.length === 0) {
         throw new Error('Please select at least one date')
       }
 
@@ -351,120 +317,38 @@ export default function NewShiftPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Shift Title */}
+          {/* Required Role */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Shift Title *
+              <Users className="w-4 h-4 inline mr-1" />
+              Staff Required *
             </label>
-            <input
-              type="text"
+            <select
               required
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              placeholder="e.g., Day Shift - Elderly Care Unit"
+              value={formData.requiredRole}
+              onChange={(e) => setFormData({ ...formData, requiredRole: e.target.value })}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
+            >
+              {staffTypes.map((type) => (
+                <option key={type.value} value={type.value}>
+                  {type.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Calendar Date Selection */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Calendar className="w-4 h-4 inline mr-1" />
+              Select Date(s) *
+            </label>
+            <MultiDateCalendar
+              selectedDates={selectedDates}
+              onToggleDate={toggleDate}
+              onClearAll={clearAllDates}
             />
           </div>
-
-          {/* Role & Shift Type */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Users className="w-4 h-4 inline mr-1" />
-                Required Role *
-              </label>
-              <select
-                required
-                value={formData.requiredRole}
-                onChange={(e) => setFormData({ ...formData, requiredRole: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
-              >
-                {staffTypes.map((type) => (
-                  <option key={type.value} value={type.value}>
-                    {type.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Shift Type *
-              </label>
-              <select
-                required
-                value={formData.shiftType}
-                onChange={(e) => handleShiftTypeChange(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
-              >
-                {shiftTypes.map((type) => (
-                  <option key={type.value} value={type.value}>
-                    {type.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Booking Mode Toggle */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              <Calendar className="w-4 h-4 inline mr-1" />
-              Schedule Type
-            </label>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setBookingMode('single')}
-                className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors ${
-                  bookingMode === 'single'
-                    ? 'bg-teal-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                Single Date
-              </button>
-              <button
-                type="button"
-                onClick={() => setBookingMode('multi')}
-                className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors ${
-                  bookingMode === 'multi'
-                    ? 'bg-teal-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                Multiple Days
-              </button>
-            </div>
-          </div>
-
-          {/* Single Date or Multi-Day Calendar */}
-          {bookingMode === 'single' ? (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Date *
-              </label>
-              <input
-                type="date"
-                required={bookingMode === 'single'}
-                value={formData.date}
-                min={new Date().toISOString().split('T')[0]}
-                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
-              />
-            </div>
-          ) : (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Select Dates *
-              </label>
-              <MultiDateCalendar
-                selectedDates={selectedDates}
-                onToggleDate={toggleDate}
-                onClearAll={clearAllDates}
-              />
-            </div>
-          )}
 
           {/* Start & End Time */}
           <div className="grid grid-cols-2 gap-4">
@@ -503,28 +387,26 @@ export default function NewShiftPage() {
                 <Banknote className="w-4 h-4 inline mr-1" />
                 Hourly Rate (£) *
               </label>
-              <input
-                type="number"
-                required
-                min="1"
-                step="0.50"
-                value={formData.hourlyRate}
-                onChange={(e) => setFormData({ ...formData, hourlyRate: e.target.value })}
-                placeholder={`e.g., ${selectedStaffType.typical.toFixed(2)}`}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
-              />
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">£</span>
+                <input
+                  type="number"
+                  required
+                  min="1"
+                  step="0.50"
+                  value={formData.hourlyRate}
+                  onChange={(e) => setFormData({ ...formData, hourlyRate: e.target.value })}
+                  placeholder="0.00"
+                  className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
+                />
+              </div>
               {/* Suggested Rate */}
               <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="flex items-start gap-2">
-                  <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <div className="text-sm">
-                    <p className="text-blue-800 font-medium">
-                      Suggested: £{selectedStaffType.minRate} - £{selectedStaffType.maxRate}/hr
-                    </p>
-                    <p className="text-blue-600">
-                      Typical rate for {selectedStaffType.label}: £{selectedStaffType.typical.toFixed(2)}/hr
-                    </p>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <Info className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                  <p className="text-sm text-blue-800 font-medium">
+                    Suggested: £{selectedStaffType.minRate} - £{selectedStaffType.maxRate}/hr
+                  </p>
                 </div>
               </div>
             </div>
@@ -557,20 +439,6 @@ export default function NewShiftPage() {
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Describe the duties, unit/ward, and any other relevant details..."
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none resize-none"
-            />
-          </div>
-
-          {/* Special Requirements */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Special Requirements
-            </label>
-            <textarea
-              rows={2}
-              value={formData.specialRequirements}
-              onChange={(e) => setFormData({ ...formData, specialRequirements: e.target.value })}
-              placeholder="Any specific qualifications, experience, or certifications required..."
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none resize-none"
             />
           </div>
@@ -640,38 +508,20 @@ export default function NewShiftPage() {
                   Meals Provided
                 </span>
               </label>
+            </div>
 
-              <label className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${
-                formData.accessibleByTransport ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'
-              }`}>
-                <input
-                  type="checkbox"
-                  checked={formData.accessibleByTransport}
-                  onChange={(e) => setFormData({ ...formData, accessibleByTransport: e.target.checked })}
-                  className="sr-only"
-                />
-                <Bus className={`w-5 h-5 ${formData.accessibleByTransport ? 'text-teal-600' : 'text-gray-400'}`} />
-                <span className={`text-sm font-medium ${formData.accessibleByTransport ? 'text-teal-700' : 'text-gray-700'}`}>
-                  Public Transport
-                </span>
+            {/* Other Amenities */}
+            <div className="mt-3">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Other (optional)
               </label>
-
-              {(formData.shiftType === 'SLEEP_IN' || formData.shiftType === 'WAKING_NIGHT') && (
-                <label className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${
-                  formData.accommodationProvided ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'
-                }`}>
-                  <input
-                    type="checkbox"
-                    checked={formData.accommodationProvided}
-                    onChange={(e) => setFormData({ ...formData, accommodationProvided: e.target.checked })}
-                    className="sr-only"
-                  />
-                  <Home className={`w-5 h-5 ${formData.accommodationProvided ? 'text-teal-600' : 'text-gray-400'}`} />
-                  <span className={`text-sm font-medium ${formData.accommodationProvided ? 'text-teal-700' : 'text-gray-700'}`}>
-                    Accommodation
-                  </span>
-                </label>
-              )}
+              <input
+                type="text"
+                value={formData.otherAmenities}
+                onChange={(e) => setFormData({ ...formData, otherAmenities: e.target.value })}
+                placeholder="e.g., Tea & coffee available, Wi-Fi access..."
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
+              />
             </div>
           </div>
 
@@ -685,7 +535,7 @@ export default function NewShiftPage() {
             </Link>
             <button
               type="submit"
-              disabled={isLoading || (bookingMode === 'multi' && selectedDates.length === 0)}
+              disabled={isLoading || selectedDates.length === 0}
               className="flex-1 px-4 py-3 bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
               {isLoading ? (
@@ -693,7 +543,7 @@ export default function NewShiftPage() {
                   <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                   Posting...
                 </>
-              ) : bookingMode === 'multi' && selectedDates.length > 1 ? (
+              ) : selectedDates.length > 1 ? (
                 `Post ${selectedDates.length} Shifts`
               ) : (
                 'Post Shift'
