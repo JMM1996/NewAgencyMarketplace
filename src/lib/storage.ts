@@ -1,29 +1,45 @@
 import { createClient } from '@supabase/supabase-js'
 
+// Environment check
+const isDevelopment = process.env.NODE_ENV === 'development'
+
 // Create a Supabase client for storage operations
-// Uses service role key for server-side uploads (bypasses RLS)
+// Production: Uses service role key (bypasses RLS for server-side operations)
+// Development: Falls back to anon key with permissive policies
 let storageClient: ReturnType<typeof createClient> | null = null
 
 function getStorageClient() {
   if (!storageClient) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    // Try service role key first, fall back to anon key
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
     if (!supabaseUrl) {
       throw new Error('NEXT_PUBLIC_SUPABASE_URL not configured')
     }
 
+    // Check if service role key is valid (not a placeholder)
+    const hasValidServiceKey = serviceRoleKey &&
+                               !serviceRoleKey.includes('your-') &&
+                               serviceRoleKey.length > 100
+
+    // In production, require service role key
+    if (!isDevelopment && !hasValidServiceKey) {
+      console.error('PRODUCTION ERROR: SUPABASE_SERVICE_ROLE_KEY is required for production')
+      throw new Error('Storage not configured for production. Add SUPABASE_SERVICE_ROLE_KEY.')
+    }
+
+    // Use service role key if available, otherwise fall back to anon key (dev only)
+    const supabaseKey = hasValidServiceKey ? serviceRoleKey : anonKey
+
     if (!supabaseKey) {
       throw new Error('No Supabase key configured')
     }
 
-    // Check if using service role or anon key
-    const isServiceRole = process.env.SUPABASE_SERVICE_ROLE_KEY &&
-                          !process.env.SUPABASE_SERVICE_ROLE_KEY.includes('your-') &&
-                          process.env.SUPABASE_SERVICE_ROLE_KEY.length > 100
+    if (isDevelopment && !hasValidServiceKey) {
+      console.warn('DEV MODE: Using anon key for storage. Set SUPABASE_SERVICE_ROLE_KEY for production.')
+    }
 
-    console.log('Storage client initialized with', isServiceRole ? 'service role key' : 'anon key')
     storageClient = createClient(supabaseUrl, supabaseKey)
   }
   return storageClient
