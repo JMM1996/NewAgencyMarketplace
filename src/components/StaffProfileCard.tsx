@@ -1,18 +1,14 @@
 'use client'
 
-import { User, Star, Shield, CheckCircle, Award, Briefcase, Clock, MessageCircle } from 'lucide-react'
+import { User, Star, Shield, CheckCircle, Award, Briefcase, Clock } from 'lucide-react'
 import Image from 'next/image'
-import Link from 'next/link'
 import type { CareStaff, Qualification, VerificationStatus } from '@/generated/prisma'
 
 interface StaffProfileCardProps {
   staff: CareStaff & {
     qualifications?: Qualification[]
-    user?: { email: string; id: string }
   }
-  showContactInfo?: boolean
   compact?: boolean
-  bookingId?: string
 }
 
 const staffTypeLabels: Record<string, string> = {
@@ -29,7 +25,7 @@ function formatPrivateName(firstName: string, lastName: string): string {
   return `${firstName} ${lastName.charAt(0).toUpperCase()}.`
 }
 
-export function StaffProfileCard({ staff, showContactInfo = false, compact = false, bookingId }: StaffProfileCardProps) {
+export function StaffProfileCard({ staff, compact = false }: StaffProfileCardProps) {
   const isVerified = staff.verificationStatus === 'VERIFIED'
   const hasDbsVerified = isVerified && staff.dbsCertificateNumber && staff.dbsIssueDate
   const hasRtwVerified = isVerified && staff.rightToWorkConfirmed
@@ -128,17 +124,6 @@ export function StaffProfileCard({ staff, showContactInfo = false, compact = fal
             <p className="text-gray-600">
               {staffTypeLabels[staff.staffType] || staff.staffType.replace(/_/g, ' ')}
             </p>
-
-            {/* Message button instead of contact info */}
-            {showContactInfo && staff.user?.id && (
-              <Link
-                href={`/dashboard/messages?userId=${staff.user.id}${bookingId ? `&bookingId=${bookingId}` : ''}`}
-                className="inline-flex items-center mt-2 px-3 py-1.5 bg-teal-600 text-white text-sm font-medium rounded-lg hover:bg-teal-700 transition-colors"
-              >
-                <MessageCircle className="w-4 h-4 mr-1.5" />
-                Send Message
-              </Link>
-            )}
           </div>
         </div>
       </div>

@@ -47,9 +47,6 @@ export default async function CareHomeShiftDetailPage({
         include: {
           careStaff: {
             include: {
-              user: {
-                select: { id: true, email: true },
-              },
               qualifications: {
                 orderBy: { createdAt: 'desc' },
                 take: 5,
@@ -142,8 +139,6 @@ export default async function CareHomeShiftDetailPage({
           </div>
           <StaffProfileCard
             staff={confirmedBooking.careStaff}
-            showContactInfo={true}
-            bookingId={confirmedBooking.id}
           />
         </div>
       )}
