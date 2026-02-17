@@ -160,10 +160,14 @@ export async function POST(request: NextRequest) {
     const workingMinutes = totalMinutes - validated.breakDuration
     const totalPay = (workingMinutes / 60) * validated.hourlyRate
 
-    // Generate title from time and postcode (e.g., "0700 - 1900, HG2 7DZ")
-    const formattedStart = validated.startTime.replace(':', '')
-    const formattedEnd = validated.endTime.replace(':', '')
-    const title = `${formattedStart} - ${formattedEnd}, ${careHome.postcode}`
+    // Generate title from role and postcode (e.g., "Care Assistant, HG2 7DZ")
+    const roleLabels: Record<string, string> = {
+      CARE_ASSISTANT: 'Care Assistant',
+      SENIOR_CARER: 'Senior Care Assistant',
+      REGISTERED_NURSE: 'Registered Nurse',
+    }
+    const roleLabel = roleLabels[validated.requiredRole] || validated.requiredRole
+    const title = `${roleLabel}, ${careHome.postcode}`
 
     // Create shifts for all dates
     const shifts = await Promise.all(
