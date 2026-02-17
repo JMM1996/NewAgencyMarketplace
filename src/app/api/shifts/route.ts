@@ -157,7 +157,8 @@ export async function POST(request: NextRequest) {
     const [endHour, endMin] = validated.endTime.split(':').map(Number)
     let totalMinutes = (endHour * 60 + endMin) - (startHour * 60 + startMin)
     if (totalMinutes < 0) totalMinutes += 24 * 60 // Overnight shift
-    const workingMinutes = totalMinutes - validated.breakDuration
+    // If paid break, carer gets paid for the full shift including break time
+    const workingMinutes = validated.paidBreak ? totalMinutes : totalMinutes - validated.breakDuration
     const totalPay = (workingMinutes / 60) * validated.hourlyRate
 
     // Generate title from role and postcode (e.g., "Care Assistant, HG2 7DZ")

@@ -28,15 +28,23 @@ const staffTypes = [
   { value: 'REGISTERED_NURSE', label: 'Registered Nurse', minRate: 25, maxRate: 35 },
 ]
 
-// Calendar Component
+// Calendar Component with Time Selection
 function MultiDateCalendar({
   selectedDates,
   onToggleDate,
   onClearAll,
+  startTime,
+  endTime,
+  onStartTimeChange,
+  onEndTimeChange,
 }: {
   selectedDates: Date[]
   onToggleDate: (date: Date) => void
   onClearAll: () => void
+  startTime: string
+  endTime: string
+  onStartTimeChange: (time: string) => void
+  onEndTimeChange: (time: string) => void
 }) {
   const [currentMonth, setCurrentMonth] = useState(new Date())
 
@@ -188,6 +196,37 @@ function MultiDateCalendar({
           </div>
         </div>
       )}
+
+      {/* Time Selection */}
+      <div className="mt-4 pt-4 border-t border-gray-200">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Clock className="w-4 h-4 inline mr-1" />
+              Start Time
+            </label>
+            <input
+              type="time"
+              required
+              value={startTime}
+              onChange={(e) => onStartTimeChange(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              End Time
+            </label>
+            <input
+              type="time"
+              required
+              value={endTime}
+              onChange={(e) => onEndTimeChange(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
@@ -317,11 +356,28 @@ export default function NewShiftPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Required Role */}
+          {/* Calendar Date & Time Selection */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Calendar className="w-4 h-4 inline mr-1" />
+              Select Date(s) & Time *
+            </label>
+            <MultiDateCalendar
+              selectedDates={selectedDates}
+              onToggleDate={toggleDate}
+              onClearAll={clearAllDates}
+              startTime={formData.startTime}
+              endTime={formData.endTime}
+              onStartTimeChange={(time) => setFormData({ ...formData, startTime: time })}
+              onEndTimeChange={(time) => setFormData({ ...formData, endTime: time })}
+            />
+          </div>
+
+          {/* Role Required */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <Users className="w-4 h-4 inline mr-1" />
-              Staff Required *
+              Role Required *
             </label>
             <select
               required
@@ -337,96 +393,52 @@ export default function NewShiftPage() {
             </select>
           </div>
 
-          {/* Calendar Date Selection */}
+          {/* Hourly Rate */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Calendar className="w-4 h-4 inline mr-1" />
-              Select Date(s) *
+              <Banknote className="w-4 h-4 inline mr-1" />
+              Hourly Rate (£) *
             </label>
-            <MultiDateCalendar
-              selectedDates={selectedDates}
-              onToggleDate={toggleDate}
-              onClearAll={clearAllDates}
-            />
-          </div>
-
-          {/* Start & End Time */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Clock className="w-4 h-4 inline mr-1" />
-                Start Time *
-              </label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">£</span>
               <input
-                type="time"
+                type="number"
                 required
-                value={formData.startTime}
-                onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
+                min="1"
+                step="0.50"
+                value={formData.hourlyRate}
+                onChange={(e) => setFormData({ ...formData, hourlyRate: e.target.value })}
+                placeholder="0.00"
+                className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
               />
             </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                End Time *
-              </label>
-              <input
-                type="time"
-                required
-                value={formData.endTime}
-                onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
-              />
+            {/* Suggested Rate */}
+            <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-center gap-2">
+                <Info className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                <p className="text-sm text-blue-800 font-medium">
+                  Suggested: £{selectedStaffType.minRate} - £{selectedStaffType.maxRate}/hr
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* Pay & Break */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Banknote className="w-4 h-4 inline mr-1" />
-                Hourly Rate (£) *
-              </label>
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">£</span>
-                <input
-                  type="number"
-                  required
-                  min="1"
-                  step="0.50"
-                  value={formData.hourlyRate}
-                  onChange={(e) => setFormData({ ...formData, hourlyRate: e.target.value })}
-                  placeholder="0.00"
-                  className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
-                />
-              </div>
-              {/* Suggested Rate */}
-              <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <Info className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                  <p className="text-sm text-blue-800 font-medium">
-                    Suggested: £{selectedStaffType.minRate} - £{selectedStaffType.maxRate}/hr
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Break Duration (minutes)
-              </label>
-              <select
-                value={formData.breakDuration}
-                onChange={(e) => setFormData({ ...formData, breakDuration: parseInt(e.target.value) })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
-              >
-                <option value={0}>No break</option>
-                <option value={15}>15 minutes</option>
-                <option value={30}>30 minutes</option>
-                <option value={45}>45 minutes</option>
-                <option value={60}>60 minutes</option>
-              </select>
-            </div>
+          {/* Break Duration */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Break Duration (minutes)
+            </label>
+            <select
+              value={formData.breakDuration}
+              onChange={(e) => setFormData({ ...formData, breakDuration: parseInt(e.target.value) })}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
+            >
+              <option value={0}>No break</option>
+              <option value={15}>15 minutes</option>
+              <option value={30}>30 minutes</option>
+              <option value={45}>45 minutes</option>
+              <option value={60}>60 minutes</option>
+            </select>
           </div>
 
           {/* Description */}
